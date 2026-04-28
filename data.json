@@ -1,0 +1,257 @@
+{
+"book": "Madinah Arabic Book 1",
+"lessons": [
+{
+"id": 1,
+"title": "الدرس الأول",
+"sections": [
+{"type": "topic", "content": "هذا", "order": 1},
+{"type": "question", "content": "ما هذا؟", "order": 2},
+{"type": "exercise", "content": "تمرين 1", "order": 3},
+{"type": "exercise", "content": "تمرين 2", "order": 4},
+{"type": "exercise", "content": "تمرين 3", "order": 5},
+{"type": "question", "content": "مَنْ هذا؟", "order": 6}
+]
+},
+{
+"id": 2,
+"title": "الدرس الثاني",
+"sections": [
+{"type": "topic", "content": "ذلك", "order": 1},
+{"type": "exercise", "content": "تمرين", "order": 2},
+{"type": "vocab", "content": "الكلمات الجديدة", "order": 3}
+]
+},
+{
+"id": 3,
+"title": "الدرس الثالث",
+"sections": [
+{"type": "grammar", "content": "بيتٌ > الْبـيتُ", "order": 1},
+{"type": "exercise", "content": "تمارين", "order": 2},
+{"type": "vocab", "content": "الكلمات الجديدة", "order": 3},
+{"type": "exercise", "content": "تمارين", "order": 4},
+{"type": "vocab", "content": "الكلمات الجديدة", "order": 5},
+{"type": "grammar", "content": "الحروف القمرية والحروف الشمسية", "order": 6},
+{"type": "exercise", "content": "تمارين", "order": 7}
+]
+},
+{
+"id": 4,
+"title": "الدرس الرابع",
+"sections": [
+{"type": "grammar", "content": "البيتُ > في البيتِ", "order": 1},
+{"type": "topic", "content": "هو / هي", "order": 2},
+{"type": "exercise", "content": "تمارين", "order": 3},
+{"type": "topic", "content": "محمدٌ، خالدٌ، حامدٌ", "order": 4},
+{"type": "topic", "content": "آمنةُ، زينبُ، فاطمةُ", "order": 5},
+{"type": "grammar", "content": "البيتُ > مِنَ البيتِ", "order": 6},
+{"type": "exercise", "content": "تمارين", "order": 7},
+{"type": "vocab", "content": "في، على، مِنْ، إلى", "order": 8}
+]
+},
+{
+"id": 5,
+"title": "الدرس الخامس",
+"sections": [
+{"type": "grammar", "content": "كتابُ محمدٍ", "order": 1},
+{"type": "exercise", "content": "تمارين", "order": 2},
+{"type": "grammar", "content": "محمدٌ > يا محمدُ", "order": 3},
+{"type": "question", "content": "كتابُ مَنْ هذا؟", "order": 4},
+{"type": "grammar", "content": "اسمٌ > اسمُ الولدِ", "order": 5},
+{"type": "grammar", "content": "ابنٌ > ابنُ المدرسِ", "order": 6},
+{"type": "grammar", "content": "مضاف، مضاف إليه", "order": 7}
+]
+},
+{
+"id": 6,
+"title": "الدرس السادس",
+"sections": [
+{"type": "topic", "content": "هذه", "order": 1},
+{"type": "question", "content": "سيارةُ مَنْ هذه؟", "order": 2},
+{"type": "question", "content": "لِمَنْ هذه؟", "order": 3},
+{"type": "question", "content": "أدراجةُ أنسٍ هذه؟", "order": 4},
+{"type": "topic", "content": "هذه أذنٌ وهذه عينٌ", "order": 5},
+{"type": "exercise", "content": "تمارين", "order": 6},
+{"type": "question", "content": "ما هذا وما هذه؟", "order": 7},
+{"type": "topic", "content": "طالبٌ / طالبةٌ", "order": 8}
+]
+},
+{
+"id": 7,
+"title": "الدرس السابع",
+"sections": [
+{"type": "topic", "content": "هذه وتلك", "order": 1},
+{"type": "topic", "content": "هذه طبيبةٌ وتلك ممرضةٌ", "order": 2},
+{"type": "question", "content": "ما تلك؟", "order": 3},
+{"type": "exercise", "content": "تمارين", "order": 4},
+{"type": "grammar", "content": "أسماء الإشارة للقريب والبعيد", "order": 5}
+]
+},
+{
+"id": 8,
+"title": "الدرس الثامن",
+"sections": [
+{"type": "grammar", "content": "هذا رجلٌ > هذا الرجلُ", "order": 1},
+{"type": "exercise", "content": "تمارين", "order": 2},
+{"type": "question", "content": "لمَنْ هذا الكتابُ؟", "order": 3},
+{"type": "grammar", "content": "المستشفَى > في المستشفَى", "order": 4},
+{"type": "grammar", "content": "أمريكا > مِنْ أمريكا", "order": 5},
+{"type": "vocab", "content": "أمامَ، خلفَ", "order": 6}
+]
+},
+{
+"id": 9,
+"title": "الدرس التاسع",
+"sections": [
+{"type": "topic", "content": "عباسٌ تاجرٌ غنيٌّ", "order": 1},
+{"type": "exercise", "content": "تمارين", "order": 2},
+{"type": "topic", "content": "درسٌ سهلٌ", "order": 3},
+{"type": "topic", "content": "كسلانُ، جوعانُ، عطشانُ", "order": 4},
+{"type": "grammar", "content": "المدرسُ الجديدُ (النعت والمنعوت)", "order": 5}
+]
+},
+{
+"id": 10,
+"title": "الدرس العاشر",
+"sections": [
+{"type": "question", "content": "مَنْ أنتَ؟", "order": 1},
+{"type": "question", "content": "مِنْ أينَ أنتَ؟", "order": 2},
+{"type": "question", "content": "ما اسمكَ؟", "order": 3},
+{"type": "exercise", "content": "تمارين", "order": 4},
+{"type": "grammar", "content": "بيتي، بيتُك، بيتُه، بيتُها", "order": 5},
+{"type": "grammar", "content": "لي، لك، له، لها", "order": 6},
+{"type": "topic", "content": "عندي كتابٌ. لي أخٌ", "order": 7},
+{"type": "grammar", "content": "معَ، عندَ، ذهبَ إلى", "order": 8}
+]
+},
+{
+"id": 11,
+"title": "الدرس الحادي عشر",
+"sections": [
+{"type": "topic", "content": "بيتي", "order": 1},
+{"type": "exercise", "content": "تمارين", "order": 2},
+{"type": "grammar", "content": "فيه، فيها", "order": 3},
+{"type": "topic", "content": "أحبُّ", "order": 4}
+]
+},
+{
+"id": 12,
+"title": "الدرس الثاني عشر",
+"sections": [
+{"type": "exercise", "content": "تمارين", "order": 1},
+{"type": "topic", "content": "قلمُك أنتَ", "order": 2},
+{"type": "question", "content": "أينَ قلمُك يا أبي؟", "order": 3},
+{"type": "topic", "content": "يا محمدُ، يا آمنةُ", "order": 4},
+{"type": "topic", "content": "يا أستاذي، يا أستاذتي", "order": 5},
+{"type": "grammar", "content": "خرجَ، خرجتْ", "order": 6},
+{"type": "grammar", "content": "الذي، التي", "order": 7}
+]
+},
+{
+"id": 13,
+"title": "الدرس الثالث عشر",
+"sections": [
+{"type": "topic", "content": "هؤلاء الفتية الطوال", "order": 1},
+{"type": "grammar", "content": "هذا > هؤلاء، هو > هم", "order": 2},
+{"type": "grammar", "content": "ذهبَ، ذهبوا", "order": 3},
+{"type": "topic", "content": "هؤلاء الفتيات", "order": 4},
+{"type": "grammar", "content": "خرجتْ، خرجنَ", "order": 5},
+{"type": "grammar", "content": "أولئك (إشارة للبعيد)", "order": 6}
+]
+},
+{
+"id": 14,
+"title": "الدرس الرابع عشر",
+"sections": [
+{"type": "grammar", "content": "أنتَ، أنتم، نحن", "order": 1},
+{"type": "grammar", "content": "بيتُكم، بيتُنا", "order": 2},
+{"type": "question", "content": "أيُّ يومٍ هذا؟", "order": 3},
+{"type": "topic", "content": "وليمُ، إدوردُ، لندنُ", "order": 4},
+{"type": "grammar", "content": "ذهبتَ، ذهبتم", "order": 5}
+]
+},
+{
+"id": 15,
+"title": "الدرس الخامس عشر",
+"sections": [
+{"type": "grammar", "content": "أنتِ، أنتنَّ", "order": 1},
+{"type": "exercise", "content": "تمارين", "order": 2},
+{"type": "grammar", "content": "كَ، كم، كِ، كنَّ", "order": 3},
+{"type": "grammar", "content": "أنا، نحن", "order": 4},
+{"type": "grammar", "content": "قبلَ، بعدَ", "order": 5},
+{"type": "grammar", "content": "ذهبتُ، ذهبنا", "order": 6}
+]
+},
+{
+"id": 16,
+"title": "الدرس السادس عشر",
+"sections": [
+{"type": "grammar", "content": "عاقل وغير عاقل", "order": 1},
+{"type": "topic", "content": "هذه الأقلام، هذه الكتب", "order": 2},
+{"type": "exercise", "content": "تمارين", "order": 3},
+{"type": "grammar", "content": "هذا بيتٌ > هذه بيوتٌ", "order": 4}
+]
+},
+{
+"id": 17,
+"title": "الدرس السابع عشر",
+"sections": [
+{"type": "exercise", "content": "تمارين", "order": 1}
+]
+},
+{
+"id": 18,
+"title": "الدرس الثامن عشر",
+"sections": [
+{"type": "grammar", "content": "أختٌ > أختانِ", "order": 1},
+{"type": "grammar", "content": "هذانِ، هما", "order": 2},
+{"type": "exercise", "content": "تمارين", "order": 3},
+{"type": "question", "content": "كم؟", "order": 4}
+]
+},
+{
+"id": 19,
+"title": "الدرس التاسع عشر",
+"sections": [
+{"type": "topic", "content": "اثنانِ", "order": 1},
+{"type": "topic", "content": "ثلاثةُ طلابٍ", "order": 2},
+{"type": "exercise", "content": "تمارين", "order": 3},
+{"type": "topic", "content": "ثلاثةُ طلابٍ - عشرةُ طلابٍ", "order": 4}
+]
+},
+{
+"id": 20,
+"title": "الدرس العشرون",
+"sections": [
+{"type": "topic", "content": "ثلاثُ طالباتٍ", "order": 1},
+{"type": "exercise", "content": "تمارين", "order": 2},
+{"type": "topic", "content": "ثلاثُ طالباتٍ - عشرُ طالباتٍ", "order": 3}
+]
+},
+{
+"id": 21,
+"title": "الدرس الحادي والعشرون",
+"sections": [
+{"type": "topic", "content": "مدرستي", "order": 1},
+{"type": "exercise", "content": "تمارين", "order": 2}
+]
+},
+{
+"id": 22,
+"title": "الدرس الثاني والعشرون",
+"sections": [
+{"type": "grammar", "content": "الممنوع من الصرف", "order": 1},
+{"type": "exercise", "content": "تمرين", "order": 2},
+{"type": "topic", "content": "أبيضُ، أسودُ، أحمرُ", "order": 3}
+]
+},
+{
+"id": 23,
+"title": "الدرس الثالث والعشرون",
+"sections": [
+{"type": "topic", "content": "لإبراهيمَ", "order": 1},
+{"type": "exercise", "content": "تمارين", "order": 2}
+]
+}
+]
+}
