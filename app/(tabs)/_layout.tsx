@@ -8,7 +8,6 @@ import { Fonts, Palette, Semantic } from '@/src/design';
 export default function TabsLayout() {
   const colorScheme = useEffectiveColorScheme();
   const palette = Semantic[colorScheme];
-  const isDark = colorScheme === 'dark';
 
   return (
     <Tabs
@@ -40,25 +39,12 @@ export default function TabsLayout() {
         headerShadowVisible: false,
       }}>
       <Tabs.Screen
-        name="settings"
+        name="index"
         options={{
-          title: 'Settings',
+          title: 'Lessons',
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
-              name={focused ? 'settings' : 'settings-outline'}
-              size={size - 2}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="practice"
-        options={{
-          title: 'Practice',
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name={focused ? 'repeat' : 'repeat-outline'}
+              name={focused ? 'book' : 'book-outline'}
               size={size - 2}
               color={color}
             />
@@ -79,12 +65,25 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="index"
+        name="practice"
         options={{
-          title: 'Lessons',
+          title: 'Practice',
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
-              name={focused ? 'book' : 'book-outline'}
+              name={focused ? 'repeat' : 'repeat-outline'}
+              size={size - 2}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Settings',
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons
+              name={focused ? 'settings' : 'settings-outline'}
               size={size - 2}
               color={color}
             />

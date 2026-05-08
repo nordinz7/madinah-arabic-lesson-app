@@ -23,9 +23,14 @@ import 'react-native-reanimated';
 
 import { useEffectiveColorScheme } from '@/src/hooks/use-effective-color-scheme';
 
-if (!I18nManager.isRTL) {
-  I18nManager.allowRTL(true);
-  I18nManager.forceRTL(true);
+// LTR layout app-wide. Arabic text inside still renders right-to-left via
+// Unicode bidirectional handling — only the surrounding UI chrome flows
+// LTR, which is what we want for an English-speaking audience learning
+// Arabic. Disabling RTL also avoids the flex-row "items clump to one
+// side" gotchas the layout suffered from earlier.
+if (I18nManager.isRTL) {
+  I18nManager.forceRTL(false);
+  I18nManager.allowRTL(false);
 }
 
 SplashScreen.preventAutoHideAsync();

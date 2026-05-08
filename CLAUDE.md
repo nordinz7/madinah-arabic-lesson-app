@@ -10,7 +10,7 @@ Open-source Expo (React Native) app for learning Arabic from the **Madinah Arabi
 
 - Expo SDK 54, React Native 0.81, React 19, new architecture enabled
 - TypeScript (strict), Expo Router 6 with `experiments.typedRoutes: true`
-- RTL forced globally in `app/_layout.tsx` via `I18nManager.forceRTL(true)` — this only takes effect after a reload, so a fresh install may render LTR until the first restart. Don't undo this; the entire app is Arabic-first.
+- **LTR layout** app-wide. `app/_layout.tsx` actively *disables* RTL via `I18nManager.forceRTL(false)` at module init. The app's chrome (tabs, headers, lists) flows left-to-right because the audience is English-speaking learners; Arabic *content text* still renders right-to-left within its own block via Unicode bidi handling, which doesn't depend on layout direction. Don't reintroduce `I18nManager.forceRTL(true)` — earlier iterations did and the flex-row grid suffered from "items clump to one side, leftover gap on the other" symptoms because of it.
 
 ## Commands
 
