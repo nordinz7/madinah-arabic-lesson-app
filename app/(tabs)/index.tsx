@@ -26,8 +26,8 @@ import {
 import { lessonCompletion, useProgress } from '@/src/stores/progress';
 import type { Lesson } from '@/src/types';
 
-const MIN_TILE = 100;
-const TILE_GAP = 4;
+const MIN_TILE = 120;
+const HAIRLINE = StyleSheet.hairlineWidth;
 
 export default function LessonsScreen() {
   const router = useRouter();
@@ -50,28 +50,21 @@ export default function LessonsScreen() {
     );
   }, [query]);
 
-  // Grid is edge-to-edge — tiles take the full screen width with no
-  // outer gutter. Only the header (search bar / resume pill) gets
-  // horizontal padding.
-  const usable = width;
-  const cols = Math.max(2, Math.floor((usable + TILE_GAP) / (MIN_TILE + TILE_GAP)));
-  const tileWidth = (usable - TILE_GAP * (cols - 1)) / cols;
+  const cols = Math.max(2, Math.floor(width / MIN_TILE));
+  const numRows = Math.ceil(filtered.length / cols);
 
   // Tile height stretches when there's vertical room left after chrome.
-  const numRows = Math.ceil(filtered.length / cols);
+  // Reference width comes from the actual screen/cols ratio (no padding).
+  const tileWidthRef = width / cols;
   const APPROX_CHROME = 240;
   const availableHeight = Math.max(0, height - APPROX_CHROME);
-  const naturalTileHeight =
-    numRows > 0 ? (availableHeight - TILE_GAP * (numRows - 1)) / numRows : tileWidth;
+  const naturalTileHeight = numRows > 0 ? availableHeight / numRows : tileWidthRef;
   const tileHeight = Math.max(
-    tileWidth,
-    Math.min(tileWidth * 1.2, naturalTileHeight),
+    tileWidthRef,
+    Math.min(tileWidthRef * 1.15, naturalTileHeight),
   );
 
-  // Group lessons into rows. Last row may have fewer than `cols` lessons,
-  // and each tile inside flex-distributes the row width equally — so a
-  // 23-lesson catalog in 3 cols ends with a 2-tile row whose tiles each
-  // take 50% of the row width. No empty trailing slot.
+  // Group into rows so last row's items flex-distribute the row width.
   const rows = useMemo<Lesson[][]>(() => {
     const out: Lesson[][] = [];
     for (let i = 0; i < filtered.length; i += cols) {
@@ -206,15 +199,10 @@ function LessonTile({
     : inProgress
     ? Palette.brand
     : palette.text;
-  const borderColor = isComplete
-    ? Palette.green
-    : inProgress
-    ? Palette.brand
-    : palette.separator;
 
-  // Numeral fontSize derives from the tile height so the digit always
-  // dominates and two-digit numbers (١٠–٢٣) stay safely inside.
-  const numeralSize = Math.floor(height * 0.6);
+  // Numeral fills the tile aggressively — 72% of height. Two-digit
+  // numbers stay inside thanks to a small horizontal padding allowance.
+  const numeralSize = Math.floor(height * 0.72);
 
   return (
     <Link
@@ -226,16 +214,18 @@ function LessonTile({
           {
             height,
             backgroundColor: bg,
-            borderColor,
+            borderColor: palette.separator,
           },
-          pressed && { opacity: 0.55 },
+          pressed && { opacity: 0.5 },
         ]}>
         <ThemedText
           script="arabic"
           weight="bold"
+          numberOfLines={1}
+          adjustsFontSizeToFit
           style={{
             fontSize: numeralSize,
-            lineHeight: numeralSize * 1.05,
+            lineHeight: numeralSize * 1.0,
             color: numeralColor,
           }}>
           {toArabicNumber(lesson.id)}
@@ -269,9 +259,7 @@ function LessonTile({
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  listContent: {
-    paddingBottom: Space[6],
-  },
+  listContent: { paddingBottom: Space[6] },
   headerPad: {
     paddingHorizontal: Space[3],
     paddingTop: Space[2],
@@ -297,20 +285,26 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   empty: { textAlign: 'center', paddingVertical: Space[8] },
-  // Each row distributes its tiles via flex: 1 so partial last rows
-  // (e.g. 2 tiles in a 3-col layout) still fill the full row width.
+  // Row spans the full screen width. Tiles inside flex-distribute that
+  // width equally — partial last rows still reach edge-to-edge because
+  // 2 tiles each get 50% of the row instead of 33% each + a 33% void.
   row: {
     flexDirection: 'row',
-    gap: TILE_GAP,
-    marginBottom: TILE_GAP,
+    width: '100%',
+    alignSelf: 'stretch',
   },
+  // Tiles touch each other. Negative right + bottom margin collapse
+  // adjacent hairline borders into single seams (otherwise borders
+  // double up to a full pixel between tiles).
   tile: {
     flex: 1,
-    borderRadius: Radius.sm,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: HAIRLINE,
+    marginRight: -HAIRLINE,
+    marginBottom: -HAIRLINE,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
+    paddingHorizontal: Space[1],
   },
   tileBar: {
     position: 'absolute',
