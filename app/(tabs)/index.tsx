@@ -24,11 +24,16 @@ import { lessonCompletion, useProgress } from '@/src/stores/progress';
 import { useSettings } from '@/src/stores/settings';
 import type { Lesson } from '@/src/types';
 
-const MIN_TILE = 84; // px; columns derived from screen width
+const MIN_TILE = 100; // px; columns derived from screen width
+
+type FillerItem = { __filler: true; id: string };
+type GridItem = Lesson | FillerItem;
+const isFiller = (item: GridItem): item is FillerItem =>
+  '__filler' in item;
 
 export default function LessonsScreen() {
   const router = useRouter();
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const cols = Math.max(3, Math.floor(width / MIN_TILE));
   const tileSize = width / cols;
 
@@ -49,6 +54,28 @@ export default function LessonsScreen() {
     );
   }, [query]);
 
+  // Pad with invisible tiles so the last row stays edge-to-edge.
+  const gridData = useMemo<GridItem[]>(() => {
+    const remainder = filtered.length % cols;
+    if (remainder === 0) return filtered;
+    const fillerCount = cols - remainder;
+    return [
+      ...filtered,
+      ...Array.from(
+        { length: fillerCount },
+        (_, i): FillerItem => ({ __filler: true, id: `__filler-${i}` }),
+      ),
+    ];
+  }, [filtered, cols]);
+
+  // Stretch tile height when there's vertical room left over after the
+  // approximate chrome (stack header, tabs, safe areas, list header).
+  const rows = Math.ceil(filtered.length / cols);
+  const APPROX_CHROME = 280;
+  const availableHeight = Math.max(0, height - APPROX_CHROME);
+  const naturalTileHeight = rows > 0 ? availableHeight / rows : tileSize;
+  const tileHeight = Math.max(tileSize, Math.min(tileSize * 1.25, naturalTileHeight));
+
   const isDark = colorScheme === 'dark';
   const inputBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)';
   const inputColor = isDark ? '#ECEDEE' : '#11181C';
@@ -56,11 +83,11 @@ export default function LessonsScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <FlatList
+      <FlatList<GridItem>
         // Force remount when column count changes (e.g. rotation).
         key={`grid-${cols}`}
-        data={filtered}
-        keyExtractor={(l) => String(l.id)}
+        data={gridData}
+        keyExtractor={(item) => String(item.id)}
         numColumns={cols}
         contentContainerStyle={styles.listContent}
         keyboardShouldPersistTaps="handled"
@@ -106,14 +133,20 @@ export default function LessonsScreen() {
         ListEmptyComponent={
           <ThemedText style={styles.empty}>No results</ThemedText>
         }
-        renderItem={({ item }) => (
-          <LessonTile
-            lesson={item}
-            completedMap={completed}
-            showTashkeel={showTashkeel}
-            size={tileSize}
-          />
-        )}
+        renderItem={({ item }) => {
+          if (isFiller(item)) {
+            return <View style={{ width: tileSize, height: tileHeight }} />;
+          }
+          return (
+            <LessonTile
+              lesson={item}
+              completedMap={completed}
+              showTashkeel={showTashkeel}
+              width={tileSize}
+              height={tileHeight}
+            />
+          );
+        }}
       />
     </ThemedView>
   );
@@ -123,12 +156,14 @@ function LessonTile({
   lesson,
   completedMap,
   showTashkeel,
-  size,
+  width,
+  height,
 }: {
   lesson: Lesson;
   completedMap: Record<string, true>;
   showTashkeel: boolean;
-  size: number;
+  width: number;
+  height: number;
 }) {
   const { ratio } = lessonCompletion(
     lesson.id,
@@ -146,7 +181,7 @@ function LessonTile({
       <Pressable
         style={({ pressed }) => [
           styles.tile,
-          { width: size, height: size },
+          { width, height },
           inProgress && styles.tileInProgress,
           isComplete && styles.tileComplete,
           pressed && styles.tilePressed,
