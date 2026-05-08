@@ -27,7 +27,7 @@ import { lessonCompletion, useProgress } from '@/src/stores/progress';
 import type { Lesson } from '@/src/types';
 
 const MIN_TILE = 100;
-const TILE_GAP = 10;
+const TILE_GAP = 4;
 
 export default function LessonsScreen() {
   const router = useRouter();
@@ -50,8 +50,10 @@ export default function LessonsScreen() {
     );
   }, [query]);
 
-  const HORIZONTAL_PAD = Space[3];
-  const usable = width - HORIZONTAL_PAD * 2;
+  // Grid is edge-to-edge — tiles take the full screen width with no
+  // outer gutter. Only the header (search bar / resume pill) gets
+  // horizontal padding.
+  const usable = width;
   const cols = Math.max(2, Math.floor((usable + TILE_GAP) / (MIN_TILE + TILE_GAP)));
   const tileWidth = (usable - TILE_GAP * (cols - 1)) / cols;
 
@@ -268,10 +270,10 @@ function LessonTile({
 const styles = StyleSheet.create({
   container: { flex: 1 },
   listContent: {
-    paddingHorizontal: Space[3],
     paddingBottom: Space[6],
   },
   headerPad: {
+    paddingHorizontal: Space[3],
     paddingTop: Space[2],
     paddingBottom: Space[3],
     gap: Space[2],
@@ -304,7 +306,7 @@ const styles = StyleSheet.create({
   },
   tile: {
     flex: 1,
-    borderRadius: Radius.lg,
+    borderRadius: Radius.sm,
     borderWidth: StyleSheet.hairlineWidth,
     alignItems: 'center',
     justifyContent: 'center',
