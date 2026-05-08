@@ -14,15 +14,15 @@
   "order": 1,
   "notes": "هذا is the demonstrative pronoun for a single masculine object that is near.\nNouns appear with tanwīn (final ـٌ /-un/), the indefinite case ending — \"a door\", \"a mosque\", etc.\nUse هذا for masculine nouns; the feminine form (هذه) is introduced in Lesson 6.",
   "examples": [
-    { "prompt": "هذا بَابٌ.", "translit": "hādhā bābun", "meaning": "This is a door." },
-    { "prompt": "هذا مَسْجِدٌ.", "translit": "hādhā masjidun", "meaning": "This is a mosque." },
-    { "prompt": "هذا بَيْتٌ.", "translit": "hādhā baytun", "meaning": "This is a house." },
-    { "prompt": "هذا مِفْتَاحٌ.", "translit": "hādhā miftāḥun", "meaning": "This is a key." },
-    { "prompt": "هذا قَلَمٌ.", "translit": "hādhā qalamun", "meaning": "This is a pen." },
-    { "prompt": "هذا كِتَابٌ.", "translit": "hādhā kitābun", "meaning": "This is a book." },
-    { "prompt": "هذا كُرْسِيٌّ.", "translit": "hādhā kursiyyun", "meaning": "This is a chair." },
-    { "prompt": "هذا سَرِيرٌ.", "translit": "hādhā sarīrun", "meaning": "This is a bed." },
-    { "prompt": "هذا مَكْتَبٌ.", "translit": "hādhā maktabun", "meaning": "This is a desk." }
+    { "prompt": "هذا بَابٌ.", "tokens": [{ "ar": "هذا", "en": "this" }, { "ar": "بَابٌ", "en": "(is) a door" }] },
+    { "prompt": "هذا مَسْجِدٌ.", "tokens": [{ "ar": "هذا", "en": "this" }, { "ar": "مَسْجِدٌ", "en": "(is) a mosque" }] },
+    { "prompt": "هذا بَيْتٌ.", "tokens": [{ "ar": "هذا", "en": "this" }, { "ar": "بَيْتٌ", "en": "(is) a house" }] },
+    { "prompt": "هذا مِفْتَاحٌ.", "tokens": [{ "ar": "هذا", "en": "this" }, { "ar": "مِفْتَاحٌ", "en": "(is) a key" }] },
+    { "prompt": "هذا قَلَمٌ.", "tokens": [{ "ar": "هذا", "en": "this" }, { "ar": "قَلَمٌ", "en": "(is) a pen" }] },
+    { "prompt": "هذا كِتَابٌ.", "tokens": [{ "ar": "هذا", "en": "this" }, { "ar": "كِتَابٌ", "en": "(is) a book" }] },
+    { "prompt": "هذا كُرْسِيٌّ.", "tokens": [{ "ar": "هذا", "en": "this" }, { "ar": "كُرْسِيٌّ", "en": "(is) a chair" }] },
+    { "prompt": "هذا سَرِيرٌ.", "tokens": [{ "ar": "هذا", "en": "this" }, { "ar": "سَرِيرٌ", "en": "(is) a bed" }] },
+    { "prompt": "هذا مَكْتَبٌ.", "tokens": [{ "ar": "هذا", "en": "this" }, { "ar": "مَكْتَبٌ", "en": "(is) a desk" }] }
   ],
   "vocab": [
     { "arabic": "بَابٌ", "translit": "bābun", "meaning": "door", "gender": "m", "plural": "أَبْوَاب", "pluralTranslit": "abwāb" },
@@ -44,12 +44,18 @@
   "order": 2,
   "notes": "ما means \"what\" when asking about non-human things.\nThe prefix أ at the start of a sentence (أهذا...؟) turns it into a yes/no question (\"is this...?\").\nAnswers use نَعَمْ (yes) or لا (no).",
   "examples": [
-    { "prompt": "ما هذا؟", "answer": "هذا بَيْتٌ.", "meaning": "What is this? — This is a house." },
-    { "prompt": "أهذا بَيْتٌ؟", "answer": "نَعَمْ، هذا بَيْتٌ.", "meaning": "Is this a house? — Yes, this is a house." },
-    { "prompt": "ما هذا؟", "answer": "هذا قَمِيصٌ.", "meaning": "What is this? — This is a shirt." },
-    { "prompt": "أهذا سَرِيرٌ؟", "answer": "لا، هذا كُرْسِيٌّ.", "meaning": "Is this a bed? — No, this is a chair." },
-    { "prompt": "أهذا مِفْتَاحٌ؟", "answer": "لا، هذا قَلَمٌ.", "meaning": "Is this a key? — No, this is a pen." },
-    { "prompt": "ما هذا؟", "answer": "هذا نَجْمٌ.", "meaning": "What is this? — This is a star." }
+    { "prompt": "ما هذا؟", "tokens": [{ "ar": "ما", "en": "what" }, { "ar": "هذا؟", "en": "(is) this?" }],
+      "answer": "هذا بَيْتٌ.", "answerTokens": [{ "ar": "هذا", "en": "this" }, { "ar": "بَيْتٌ", "en": "(is) a house" }] },
+    { "prompt": "أهذا بَيْتٌ؟", "tokens": [{ "ar": "أهذا", "en": "is this" }, { "ar": "بَيْتٌ؟", "en": "(a) house?" }],
+      "answer": "نَعَمْ، هذا بَيْتٌ.", "answerTokens": [{ "ar": "نَعَمْ،", "en": "yes," }, { "ar": "هذا", "en": "this" }, { "ar": "بَيْتٌ", "en": "(is) a house" }] },
+    { "prompt": "ما هذا؟", "tokens": [{ "ar": "ما", "en": "what" }, { "ar": "هذا؟", "en": "(is) this?" }],
+      "answer": "هذا قَمِيصٌ.", "answerTokens": [{ "ar": "هذا", "en": "this" }, { "ar": "قَمِيصٌ", "en": "(is) a shirt" }] },
+    { "prompt": "أهذا سَرِيرٌ؟", "tokens": [{ "ar": "أهذا", "en": "is this" }, { "ar": "سَرِيرٌ؟", "en": "(a) bed?" }],
+      "answer": "لا، هذا كُرْسِيٌّ.", "answerTokens": [{ "ar": "لا،", "en": "no," }, { "ar": "هذا", "en": "this" }, { "ar": "كُرْسِيٌّ", "en": "(is) a chair" }] },
+    { "prompt": "أهذا مِفْتَاحٌ؟", "tokens": [{ "ar": "أهذا", "en": "is this" }, { "ar": "مِفْتَاحٌ؟", "en": "(a) key?" }],
+      "answer": "لا، هذا قَلَمٌ.", "answerTokens": [{ "ar": "لا،", "en": "no," }, { "ar": "هذا", "en": "this" }, { "ar": "قَلَمٌ", "en": "(is) a pen" }] },
+    { "prompt": "ما هذا؟", "tokens": [{ "ar": "ما", "en": "what" }, { "ar": "هذا؟", "en": "(is) this?" }],
+      "answer": "هذا نَجْمٌ.", "answerTokens": [{ "ar": "هذا", "en": "this" }, { "ar": "نَجْمٌ", "en": "(is) a star" }] }
   ],
   "vocab": [
     { "arabic": "قَمِيصٌ", "translit": "qamīṣun", "meaning": "shirt", "gender": "m", "plural": "قُمْصَان", "pluralTranslit": "qumṣān" },
@@ -63,12 +69,12 @@
   "meaning": "Exercise 1 — answer ما هذا؟ for each pictured object",
   "order": 3,
   "items": [
-    { "prompt": "ما هذا؟", "hint": "مفتاح", "answer": "هذا مِفْتَاحٌ." },
-    { "prompt": "ما هذا؟", "hint": "كتاب", "answer": "هذا كِتَابٌ." },
-    { "prompt": "ما هذا؟", "hint": "قلم", "answer": "هذا قَلَمٌ." },
-    { "prompt": "ما هذا؟", "hint": "باب", "answer": "هذا بَابٌ." },
-    { "prompt": "ما هذا؟", "hint": "بيت", "answer": "هذا بَيْتٌ." },
-    { "prompt": "ما هذا؟", "hint": "كرسي", "answer": "هذا كُرْسِيٌّ." }
+    { "prompt": "ما هذا؟", "tokens": [{ "ar": "ما", "en": "what" }, { "ar": "هذا؟", "en": "(is) this?" }], "hint": "مفتاح", "answer": "هذا مِفْتَاحٌ.", "answerTokens": [{ "ar": "هذا", "en": "this" }, { "ar": "مِفْتَاحٌ", "en": "(is) a key" }] },
+    { "prompt": "ما هذا؟", "tokens": [{ "ar": "ما", "en": "what" }, { "ar": "هذا؟", "en": "(is) this?" }], "hint": "كتاب", "answer": "هذا كِتَابٌ.", "answerTokens": [{ "ar": "هذا", "en": "this" }, { "ar": "كِتَابٌ", "en": "(is) a book" }] },
+    { "prompt": "ما هذا؟", "tokens": [{ "ar": "ما", "en": "what" }, { "ar": "هذا؟", "en": "(is) this?" }], "hint": "قلم", "answer": "هذا قَلَمٌ.", "answerTokens": [{ "ar": "هذا", "en": "this" }, { "ar": "قَلَمٌ", "en": "(is) a pen" }] },
+    { "prompt": "ما هذا؟", "tokens": [{ "ar": "ما", "en": "what" }, { "ar": "هذا؟", "en": "(is) this?" }], "hint": "باب", "answer": "هذا بَابٌ.", "answerTokens": [{ "ar": "هذا", "en": "this" }, { "ar": "بَابٌ", "en": "(is) a door" }] },
+    { "prompt": "ما هذا؟", "tokens": [{ "ar": "ما", "en": "what" }, { "ar": "هذا؟", "en": "(is) this?" }], "hint": "بيت", "answer": "هذا بَيْتٌ.", "answerTokens": [{ "ar": "هذا", "en": "this" }, { "ar": "بَيْتٌ", "en": "(is) a house" }] },
+    { "prompt": "ما هذا؟", "tokens": [{ "ar": "ما", "en": "what" }, { "ar": "هذا؟", "en": "(is) this?" }], "hint": "كرسي", "answer": "هذا كُرْسِيٌّ.", "answerTokens": [{ "ar": "هذا", "en": "this" }, { "ar": "كُرْسِيٌّ", "en": "(is) a chair" }] }
   ]
 },
 {
@@ -78,10 +84,10 @@
   "meaning": "Exercise 2 — answer the yes/no questions truthfully based on each picture",
   "order": 4,
   "items": [
-    { "prompt": "أهذا بَيْتٌ؟", "hint": "مسجد", "answer": "لا، هذا مَسْجِدٌ." },
-    { "prompt": "أهذا مِفْتَاحٌ؟", "hint": "قلم", "answer": "لا، هذا قَلَمٌ." },
-    { "prompt": "أهذا قَمِيصٌ؟", "hint": "قميص", "answer": "نَعَمْ، هذا قَمِيصٌ." },
-    { "prompt": "أهذا نَجْمٌ؟", "hint": "نجم", "answer": "نَعَمْ، هذا نَجْمٌ." }
+    { "prompt": "أهذا بَيْتٌ؟", "tokens": [{ "ar": "أهذا", "en": "is this" }, { "ar": "بَيْتٌ؟", "en": "(a) house?" }], "hint": "مسجد", "answer": "لا، هذا مَسْجِدٌ.", "answerTokens": [{ "ar": "لا،", "en": "no," }, { "ar": "هذا", "en": "this" }, { "ar": "مَسْجِدٌ", "en": "(is) a mosque" }] },
+    { "prompt": "أهذا مِفْتَاحٌ؟", "tokens": [{ "ar": "أهذا", "en": "is this" }, { "ar": "مِفْتَاحٌ؟", "en": "(a) key?" }], "hint": "قلم", "answer": "لا، هذا قَلَمٌ.", "answerTokens": [{ "ar": "لا،", "en": "no," }, { "ar": "هذا", "en": "this" }, { "ar": "قَلَمٌ", "en": "(is) a pen" }] },
+    { "prompt": "أهذا قَمِيصٌ؟", "tokens": [{ "ar": "أهذا", "en": "is this" }, { "ar": "قَمِيصٌ؟", "en": "(a) shirt?" }], "hint": "قميص", "answer": "نَعَمْ، هذا قَمِيصٌ.", "answerTokens": [{ "ar": "نَعَمْ،", "en": "yes," }, { "ar": "هذا", "en": "this" }, { "ar": "قَمِيصٌ", "en": "(is) a shirt" }] },
+    { "prompt": "أهذا نَجْمٌ؟", "tokens": [{ "ar": "أهذا", "en": "is this" }, { "ar": "نَجْمٌ؟", "en": "(a) star?" }], "hint": "نجم", "answer": "نَعَمْ، هذا نَجْمٌ.", "answerTokens": [{ "ar": "نَعَمْ،", "en": "yes," }, { "ar": "هذا", "en": "this" }, { "ar": "نَجْمٌ", "en": "(is) a star" }] }
   ]
 },
 {
@@ -91,13 +97,13 @@
   "meaning": "Exercise 3 — Read and write",
   "order": 5,
   "items": [
-    { "prompt": "هذا مَكْتَبٌ.", "meaning": "This is a desk." },
-    { "prompt": "هذا مَسْجِدٌ.", "meaning": "This is a mosque." },
-    { "prompt": "هذا قَلَمٌ.", "meaning": "This is a pen." },
-    { "prompt": "هذا سَرِيرٌ.", "meaning": "This is a bed." },
-    { "prompt": "ما هذا؟ هذا كُرْسِيٌّ.", "meaning": "What is this? This is a chair." },
-    { "prompt": "أهذا بَيْتٌ؟ لا، هذا مَسْجِدٌ.", "meaning": "Is this a house? No, this is a mosque." },
-    { "prompt": "ما هذا؟ هذا مِفْتَاحٌ.", "meaning": "What is this? This is a key." }
+    { "prompt": "هذا مَكْتَبٌ.", "tokens": [{ "ar": "هذا", "en": "this" }, { "ar": "مَكْتَبٌ", "en": "(is) a desk" }] },
+    { "prompt": "هذا مَسْجِدٌ.", "tokens": [{ "ar": "هذا", "en": "this" }, { "ar": "مَسْجِدٌ", "en": "(is) a mosque" }] },
+    { "prompt": "هذا قَلَمٌ.", "tokens": [{ "ar": "هذا", "en": "this" }, { "ar": "قَلَمٌ", "en": "(is) a pen" }] },
+    { "prompt": "هذا سَرِيرٌ.", "tokens": [{ "ar": "هذا", "en": "this" }, { "ar": "سَرِيرٌ", "en": "(is) a bed" }] },
+    { "prompt": "ما هذا؟ هذا كُرْسِيٌّ.", "tokens": [{ "ar": "ما", "en": "what" }, { "ar": "هذا؟", "en": "(is) this?" }, { "ar": "هذا", "en": "this" }, { "ar": "كُرْسِيٌّ", "en": "(is) a chair" }] },
+    { "prompt": "أهذا بَيْتٌ؟ لا، هذا مَسْجِدٌ.", "tokens": [{ "ar": "أهذا", "en": "is this" }, { "ar": "بَيْتٌ؟", "en": "(a) house?" }, { "ar": "لا،", "en": "no," }, { "ar": "هذا", "en": "this" }, { "ar": "مَسْجِدٌ", "en": "(is) a mosque" }] },
+    { "prompt": "ما هذا؟ هذا مِفْتَاحٌ.", "tokens": [{ "ar": "ما", "en": "what" }, { "ar": "هذا؟", "en": "(is) this?" }, { "ar": "هذا", "en": "this" }, { "ar": "مِفْتَاحٌ", "en": "(is) a key" }] }
   ]
 },
 {
@@ -108,17 +114,28 @@
   "order": 6,
   "notes": "مَنْ means \"who\" — used for people.\nIn classical Arabic, mostly animate beings (people and some animals) are referred to with مَنْ; objects use ما.\nIn this section the same demonstrative هذا applies to people just as it did to objects.",
   "examples": [
-    { "prompt": "مَنْ هذا؟", "answer": "هذا طَبِيبٌ.", "meaning": "Who is this? — This is a doctor." },
-    { "prompt": "مَنْ هذا؟", "answer": "هذا وَلَدٌ.", "meaning": "Who is this? — This is a boy." },
-    { "prompt": "مَنْ هذا؟", "answer": "هذا طَالِبٌ.", "meaning": "Who is this? — This is a student." },
-    { "prompt": "أهذا وَلَدٌ؟", "answer": "لا، هذا رَجُلٌ.", "meaning": "Is this a boy? — No, this is a man." },
-    { "prompt": "مَنْ هذا؟", "answer": "هذا تَاجِرٌ.", "meaning": "Who is this? — This is a merchant." },
-    { "prompt": "أهذا كَلْبٌ؟", "answer": "لا، هذا قِطٌّ.", "meaning": "Is this a dog? — No, this is a cat." },
-    { "prompt": "أهذا حِمَارٌ؟", "answer": "لا، هذا حِصَانٌ.", "meaning": "Is this a donkey? — No, this is a horse." },
-    { "prompt": "وما هذا؟", "answer": "هذا جَمَلٌ.", "meaning": "And what is this? — This is a camel." },
-    { "prompt": "ما هذا؟", "answer": "هذا دِيكٌ.", "meaning": "What is this? — This is a rooster." },
-    { "prompt": "مَنْ هذا؟", "answer": "هذا مُدَرِّسٌ.", "meaning": "Who is this? — This is a teacher." },
-    { "prompt": "أهذا قَمِيصٌ؟", "answer": "لا، هذا مِنْدِيلٌ.", "meaning": "Is this a shirt? — No, this is a handkerchief." }
+    { "prompt": "مَنْ هذا؟", "tokens": [{ "ar": "مَنْ", "en": "who" }, { "ar": "هذا؟", "en": "(is) this?" }],
+      "answer": "هذا طَبِيبٌ.", "answerTokens": [{ "ar": "هذا", "en": "this" }, { "ar": "طَبِيبٌ", "en": "(is) a doctor" }] },
+    { "prompt": "مَنْ هذا؟", "tokens": [{ "ar": "مَنْ", "en": "who" }, { "ar": "هذا؟", "en": "(is) this?" }],
+      "answer": "هذا وَلَدٌ.", "answerTokens": [{ "ar": "هذا", "en": "this" }, { "ar": "وَلَدٌ", "en": "(is) a boy" }] },
+    { "prompt": "مَنْ هذا؟", "tokens": [{ "ar": "مَنْ", "en": "who" }, { "ar": "هذا؟", "en": "(is) this?" }],
+      "answer": "هذا طَالِبٌ.", "answerTokens": [{ "ar": "هذا", "en": "this" }, { "ar": "طَالِبٌ", "en": "(is) a student" }] },
+    { "prompt": "أهذا وَلَدٌ؟", "tokens": [{ "ar": "أهذا", "en": "is this" }, { "ar": "وَلَدٌ؟", "en": "(a) boy?" }],
+      "answer": "لا، هذا رَجُلٌ.", "answerTokens": [{ "ar": "لا،", "en": "no," }, { "ar": "هذا", "en": "this" }, { "ar": "رَجُلٌ", "en": "(is) a man" }] },
+    { "prompt": "مَنْ هذا؟", "tokens": [{ "ar": "مَنْ", "en": "who" }, { "ar": "هذا؟", "en": "(is) this?" }],
+      "answer": "هذا تَاجِرٌ.", "answerTokens": [{ "ar": "هذا", "en": "this" }, { "ar": "تَاجِرٌ", "en": "(is) a merchant" }] },
+    { "prompt": "أهذا كَلْبٌ؟", "tokens": [{ "ar": "أهذا", "en": "is this" }, { "ar": "كَلْبٌ؟", "en": "(a) dog?" }],
+      "answer": "لا، هذا قِطٌّ.", "answerTokens": [{ "ar": "لا،", "en": "no," }, { "ar": "هذا", "en": "this" }, { "ar": "قِطٌّ", "en": "(is) a cat" }] },
+    { "prompt": "أهذا حِمَارٌ؟", "tokens": [{ "ar": "أهذا", "en": "is this" }, { "ar": "حِمَارٌ؟", "en": "(a) donkey?" }],
+      "answer": "لا، هذا حِصَانٌ.", "answerTokens": [{ "ar": "لا،", "en": "no," }, { "ar": "هذا", "en": "this" }, { "ar": "حِصَانٌ", "en": "(is) a horse" }] },
+    { "prompt": "وما هذا؟", "tokens": [{ "ar": "وما", "en": "and what" }, { "ar": "هذا؟", "en": "(is) this?" }],
+      "answer": "هذا جَمَلٌ.", "answerTokens": [{ "ar": "هذا", "en": "this" }, { "ar": "جَمَلٌ", "en": "(is) a camel" }] },
+    { "prompt": "ما هذا؟", "tokens": [{ "ar": "ما", "en": "what" }, { "ar": "هذا؟", "en": "(is) this?" }],
+      "answer": "هذا دِيكٌ.", "answerTokens": [{ "ar": "هذا", "en": "this" }, { "ar": "دِيكٌ", "en": "(is) a rooster" }] },
+    { "prompt": "مَنْ هذا؟", "tokens": [{ "ar": "مَنْ", "en": "who" }, { "ar": "هذا؟", "en": "(is) this?" }],
+      "answer": "هذا مُدَرِّسٌ.", "answerTokens": [{ "ar": "هذا", "en": "this" }, { "ar": "مُدَرِّسٌ", "en": "(is) a teacher" }] },
+    { "prompt": "أهذا قَمِيصٌ؟", "tokens": [{ "ar": "أهذا", "en": "is this" }, { "ar": "قَمِيصٌ؟", "en": "(a) shirt?" }],
+      "answer": "لا، هذا مِنْدِيلٌ.", "answerTokens": [{ "ar": "لا،", "en": "no," }, { "ar": "هذا", "en": "this" }, { "ar": "مِنْدِيلٌ", "en": "(is) a handkerchief" }] }
   ],
   "vocab": [
     { "arabic": "طَبِيبٌ", "translit": "ṭabībun", "meaning": "doctor", "gender": "m", "plural": "أَطِبَّاء", "pluralTranslit": "aṭibbā'" },
@@ -146,16 +163,16 @@
   "meaning": "Exercise 4 — Read and write the ten sentences",
   "order": 7,
   "items": [
-    { "prompt": "ما هذا؟ هذا قَلَمٌ.", "meaning": "What is this? This is a pen." },
-    { "prompt": "هذا كَلْبٌ.", "meaning": "This is a dog." },
-    { "prompt": "مَنْ هذا؟ هذا طَبِيبٌ.", "meaning": "Who is this? This is a doctor." },
-    { "prompt": "هذا جَمَلٌ.", "meaning": "This is a camel." },
-    { "prompt": "أهذا كَلْبٌ؟ لا، هذا قِطٌّ.", "meaning": "Is this a dog? No, this is a cat." },
-    { "prompt": "أهذا دِيكٌ؟ نَعَمْ.", "meaning": "Is this a rooster? Yes." },
-    { "prompt": "أهذا حِصَانٌ؟ لا، هذا حِمَارٌ.", "meaning": "Is this a horse? No, this is a donkey." },
-    { "prompt": "هذا مِنْدِيلٌ.", "meaning": "This is a handkerchief." },
-    { "prompt": "أهذا وَلَدٌ؟ نَعَمْ.", "meaning": "Is this a boy? Yes." },
-    { "prompt": "مَنْ هذا؟ هذا رَجُلٌ.", "meaning": "Who is this? This is a man." }
+    { "prompt": "ما هذا؟ هذا قَلَمٌ.", "tokens": [{ "ar": "ما", "en": "what" }, { "ar": "هذا؟", "en": "(is) this?" }, { "ar": "هذا", "en": "this" }, { "ar": "قَلَمٌ", "en": "(is) a pen" }] },
+    { "prompt": "هذا كَلْبٌ.", "tokens": [{ "ar": "هذا", "en": "this" }, { "ar": "كَلْبٌ", "en": "(is) a dog" }] },
+    { "prompt": "مَنْ هذا؟ هذا طَبِيبٌ.", "tokens": [{ "ar": "مَنْ", "en": "who" }, { "ar": "هذا؟", "en": "(is) this?" }, { "ar": "هذا", "en": "this" }, { "ar": "طَبِيبٌ", "en": "(is) a doctor" }] },
+    { "prompt": "هذا جَمَلٌ.", "tokens": [{ "ar": "هذا", "en": "this" }, { "ar": "جَمَلٌ", "en": "(is) a camel" }] },
+    { "prompt": "أهذا كَلْبٌ؟ لا، هذا قِطٌّ.", "tokens": [{ "ar": "أهذا", "en": "is this" }, { "ar": "كَلْبٌ؟", "en": "(a) dog?" }, { "ar": "لا،", "en": "no," }, { "ar": "هذا", "en": "this" }, { "ar": "قِطٌّ", "en": "(is) a cat" }] },
+    { "prompt": "أهذا دِيكٌ؟ نَعَمْ.", "tokens": [{ "ar": "أهذا", "en": "is this" }, { "ar": "دِيكٌ؟", "en": "(a) rooster?" }, { "ar": "نَعَمْ.", "en": "yes." }] },
+    { "prompt": "أهذا حِصَانٌ؟ لا، هذا حِمَارٌ.", "tokens": [{ "ar": "أهذا", "en": "is this" }, { "ar": "حِصَانٌ؟", "en": "(a) horse?" }, { "ar": "لا،", "en": "no," }, { "ar": "هذا", "en": "this" }, { "ar": "حِمَارٌ", "en": "(is) a donkey" }] },
+    { "prompt": "هذا مِنْدِيلٌ.", "tokens": [{ "ar": "هذا", "en": "this" }, { "ar": "مِنْدِيلٌ", "en": "(is) a handkerchief" }] },
+    { "prompt": "أهذا وَلَدٌ؟ نَعَمْ.", "tokens": [{ "ar": "أهذا", "en": "is this" }, { "ar": "وَلَدٌ؟", "en": "(a) boy?" }, { "ar": "نَعَمْ.", "en": "yes." }] },
+    { "prompt": "مَنْ هذا؟ هذا رَجُلٌ.", "tokens": [{ "ar": "مَنْ", "en": "who" }, { "ar": "هذا؟", "en": "(is) this?" }, { "ar": "هذا", "en": "this" }, { "ar": "رَجُلٌ", "en": "(is) a man" }] }
   ]
 }
 ]

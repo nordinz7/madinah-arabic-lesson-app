@@ -3,6 +3,7 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
+import { InterlinearText } from '@/components/interlinear-text';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { maybeStripTashkeel } from '@/src/arabic';
@@ -109,45 +110,36 @@ function SectionCard({
 }) {
   const palette = SECTION_PALETTE[section.type];
   const arabic = (s: string) => maybeStripTashkeel(s, showTashkeel);
+  const subtitleParts = [section.translit, section.meaning].filter(Boolean);
 
   return (
-    <View
-      style={[
-        styles.card,
-        { borderColor: palette.border },
-        completed && styles.cardCompleted,
-      ]}>
-      <View style={styles.cardHeader}>
-        <View style={[styles.badge, { backgroundColor: palette.bg }]}>
-          <ThemedText style={[styles.badgeText, { color: palette.fg }]}>
-            {SECTION_LABELS_AR[section.type]}
-          </ThemedText>
-        </View>
-        <ThemedText style={styles.badgeEn}>
-          {SECTION_LABELS_EN[section.type]}
+    <View style={[styles.section, completed && styles.sectionCompleted]}>
+      <View style={styles.sectionHeader}>
+        <View style={[styles.typeDot, { backgroundColor: palette.fg }]} />
+        <ThemedText style={styles.typeLabel}>
+          {SECTION_LABELS_AR[section.type]}
         </ThemedText>
         <View style={styles.cardSpacer} />
         <Pressable onPress={onToggle} hitSlop={10}>
           <Ionicons
             name={completed ? 'checkmark-circle' : 'ellipse-outline'}
-            size={24}
+            size={22}
             color={completed ? '#16A34A' : '#9BA1A6'}
           />
         </Pressable>
       </View>
       <ThemedText
-        type="subtitle"
+        type="title"
         style={[
-          styles.cardContent,
-          { fontSize: 22 * fontScale, lineHeight: 36 * fontScale },
+          styles.sectionTitle,
+          { fontSize: 26 * fontScale, lineHeight: 38 * fontScale },
         ]}>
         {arabic(section.content)}
       </ThemedText>
-      {section.translit ? (
-        <ThemedText style={styles.cardTranslit}>{section.translit}</ThemedText>
-      ) : null}
-      {section.meaning ? (
-        <ThemedText style={styles.cardMeaning}>{section.meaning}</ThemedText>
+      {subtitleParts.length ? (
+        <ThemedText style={styles.sectionSub}>
+          {subtitleParts.join(' · ')}
+        </ThemedText>
       ) : null}
       {section.notes ? <NotesBlock notes={section.notes} /> : null}
       {section.examples?.length ? (
@@ -206,31 +198,60 @@ function ExamplesBlock({
 }) {
   return (
     <View style={styles.subBlock}>
-      <ThemedText style={styles.subHeading}>أمثلة · Examples</ThemedText>
+      <ThemedText style={styles.subHeading}>Examples</ThemedText>
       {examples.map((ex, i) => (
         <View key={i} style={styles.exampleRow}>
-          <ThemedText
-            style={[
-              styles.examplePrompt,
-              { fontSize: 19 * fontScale, lineHeight: 30 * fontScale },
-            ]}>
-            {arabic(ex.prompt)}
-          </ThemedText>
+          <PhraseLine
+            text={ex.prompt}
+            tokens={ex.tokens}
+            fontScale={fontScale}
+            arabic={arabic}
+          />
           {ex.answer ? (
-            <ThemedText
-              style={[
-                styles.exampleAnswer,
-                { fontSize: 19 * fontScale, lineHeight: 30 * fontScale },
-              ]}>
-              {arabic(ex.answer)}
-            </ThemedText>
-          ) : null}
-          {ex.meaning ? (
-            <ThemedText style={styles.exampleMeaning}>{ex.meaning}</ThemedText>
+            <View style={styles.examplePromptAnswer}>
+              <PhraseLine
+                text={ex.answer}
+                tokens={ex.answerTokens}
+                fontScale={fontScale}
+                arabic={arabic}
+                muted
+              />
+            </View>
           ) : null}
         </View>
       ))}
     </View>
+  );
+}
+
+function PhraseLine({
+  text,
+  tokens,
+  fontScale,
+  arabic,
+  muted,
+}: {
+  text: string;
+  tokens?: ExerciseItem['tokens'];
+  fontScale: number;
+  arabic: (s: string) => string;
+  muted?: boolean;
+}) {
+  if (tokens && tokens.length > 0) {
+    return (
+      <View style={muted ? styles.phraseMuted : undefined}>
+        <InterlinearText tokens={tokens} size={20 * fontScale} />
+      </View>
+    );
+  }
+  return (
+    <ThemedText
+      style={[
+        { fontSize: 19 * fontScale, lineHeight: 30 * fontScale },
+        muted && { opacity: 0.85 },
+      ]}>
+      {arabic(text)}
+    </ThemedText>
   );
 }
 
@@ -339,17 +360,14 @@ function ExerciseRow({
   return (
     <View style={styles.exerciseRow}>
       <View style={styles.exerciseRowHeader}>
-        <View style={styles.exerciseIndex}>
-          <ThemedText style={styles.exerciseIndexText}>{index}</ThemedText>
-        </View>
+        <ThemedText style={styles.exerciseIndexText}>{index}.</ThemedText>
         <View style={styles.exerciseBody}>
-          <ThemedText
-            style={[
-              styles.exercisePrompt,
-              { fontSize: 19 * fontScale, lineHeight: 30 * fontScale },
-            ]}>
-            {arabic(item.prompt)}
-          </ThemedText>
+          <PhraseLine
+            text={item.prompt}
+            tokens={item.tokens}
+            fontScale={fontScale}
+            arabic={arabic}
+          />
           {item.hint ? (
             <View style={styles.hintChip}>
               <Ionicons name="image-outline" size={12} color="#6B7280" />
@@ -358,9 +376,6 @@ function ExerciseRow({
               </ThemedText>
             </View>
           ) : null}
-          {item.meaning ? (
-            <ThemedText style={styles.exerciseMeaning}>{item.meaning}</ThemedText>
-          ) : null}
         </View>
       </View>
       {hasAnswer ? (
@@ -368,21 +383,19 @@ function ExerciseRow({
           onPress={() => setRevealed((r) => !r)}
           style={styles.answerWrap}
           hitSlop={4}>
-          <View style={styles.answerInner}>
-            <ThemedText
-              style={[
-                styles.answerText,
-                { fontSize: 18 * fontScale, lineHeight: 28 * fontScale },
-                !revealed && styles.answerTextHidden,
-              ]}>
-              {arabic(item.answer!)}
-            </ThemedText>
+          <View style={[styles.answerInner, !revealed && styles.answerTextHidden]}>
+            <PhraseLine
+              text={item.answer!}
+              tokens={item.answerTokens}
+              fontScale={fontScale}
+              arabic={arabic}
+            />
           </View>
           {!revealed ? (
             <View style={styles.answerOverlay}>
               <Ionicons name="eye-outline" size={14} color="#0a7ea4" />
               <ThemedText style={styles.answerOverlayText}>
-                اضغط للكشف عن الإجابة
+                Tap to reveal answer
               </ThemedText>
             </View>
           ) : null}
@@ -415,31 +428,33 @@ const styles = StyleSheet.create({
   },
   progressFill: { height: '100%', backgroundColor: '#0a7ea4' },
   progressText: { fontSize: 13, opacity: 0.7 },
-  sections: { marginTop: 12, gap: 12 },
-  card: {
-    borderWidth: 1,
-    borderRadius: 14,
-    padding: 16,
-    backgroundColor: 'rgba(127,127,127,0.04)',
+  sections: { marginTop: 8 },
+  section: {
+    paddingTop: 24,
+    paddingBottom: 8,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: 'rgba(127,127,127,0.25)',
   },
-  cardCompleted: { opacity: 0.85 },
-  cardHeader: {
+  sectionCompleted: { opacity: 0.7 },
+  sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 10,
+    gap: 6,
+    marginBottom: 4,
   },
   cardSpacer: { flex: 1 },
-  badge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 999,
+  typeDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
-  badgeText: { fontSize: 13, fontWeight: '600' },
-  badgeEn: { fontSize: 12, opacity: 0.5 },
-  cardContent: {},
-  cardTranslit: { fontSize: 14, opacity: 0.6, marginTop: 4, fontStyle: 'italic' },
-  cardMeaning: { fontSize: 14, opacity: 0.8, marginTop: 4 },
+  typeLabel: {
+    fontSize: 11,
+    opacity: 0.55,
+    letterSpacing: 0.3,
+  },
+  sectionTitle: { textAlign: 'right' },
+  sectionSub: { fontSize: 13, opacity: 0.55, marginTop: 4, fontStyle: 'italic' },
   notesBlock: {
     backgroundColor: 'rgba(127,127,127,0.07)',
     borderRadius: 10,
@@ -457,22 +472,21 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   bulletText: { flex: 1 },
-  subBlock: { marginTop: 16 },
+  subBlock: { marginTop: 18 },
   subHeading: {
-    fontSize: 12,
-    opacity: 0.55,
+    fontSize: 11,
+    opacity: 0.5,
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 10,
+    letterSpacing: 0.6,
+    marginBottom: 12,
   },
   exampleRow: {
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(127,127,127,0.12)',
+    paddingVertical: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: 'rgba(127,127,127,0.14)',
   },
-  examplePrompt: { },
-  exampleAnswer: { opacity: 0.85, marginTop: 2 },
-  exampleMeaning: { fontSize: 13, opacity: 0.6, marginTop: 4 },
+  examplePromptAnswer: { marginTop: 6 },
+  phraseMuted: { opacity: 0.85 },
   vocabGrid: { gap: 6 },
   vocabRow: {
     backgroundColor: 'rgba(127,127,127,0.07)',
@@ -514,23 +528,19 @@ const styles = StyleSheet.create({
   genderChipTextM: { color: '#0a7ea4' },
   genderChipTextF: { color: '#BE185D' },
   exerciseRow: {
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(127,127,127,0.12)',
+    paddingVertical: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: 'rgba(127,127,127,0.14)',
   },
-  exerciseRowHeader: { flexDirection: 'row', gap: 10, alignItems: 'flex-start' },
-  exerciseIndex: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: 'rgba(10,126,164,0.12)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 4,
+  exerciseRowHeader: { flexDirection: 'row', gap: 8, alignItems: 'flex-start' },
+  exerciseIndexText: {
+    fontSize: 13,
+    opacity: 0.45,
+    minWidth: 22,
+    textAlign: 'right',
+    marginTop: 2,
   },
-  exerciseIndexText: { fontSize: 12, fontWeight: '600', color: '#0a7ea4' },
   exerciseBody: { flex: 1 },
-  exercisePrompt: { },
   exerciseMeaning: { fontSize: 13, opacity: 0.6, marginTop: 4 },
   hintChip: {
     flexDirection: 'row',

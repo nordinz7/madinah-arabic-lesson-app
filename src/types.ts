@@ -17,12 +17,21 @@ export type VocabItem = {
   pluralTranslit?: string;
 };
 
+export type Token = {
+  ar: string;
+  en: string;
+};
+
 export type ExerciseItem = {
   prompt: string;
   translit?: string;
   meaning?: string;
   answer?: string;
   hint?: string;
+  /** Word-by-word breakdown of `prompt`. Tokens flow right-to-left visually. */
+  tokens?: Token[];
+  /** Word-by-word breakdown of `answer`. */
+  answerTokens?: Token[];
 };
 
 export type Section = {

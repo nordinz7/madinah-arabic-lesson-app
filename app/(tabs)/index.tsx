@@ -11,7 +11,7 @@ import {
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { BOOK_TITLE, LESSONS } from '@/src/data';
+import { LESSONS } from '@/src/data';
 import { useEffectiveColorScheme } from '@/src/hooks/use-effective-color-scheme';
 import { lessonCompletion, useProgress } from '@/src/stores/progress';
 import type { Lesson } from '@/src/types';
@@ -22,9 +22,7 @@ export default function LessonsScreen() {
   const colorScheme = useEffectiveColorScheme();
 
   const completed = useProgress((s) => s.completedSections);
-  const bookmarks = useProgress((s) => s.bookmarkedLessons);
   const lastLessonId = useProgress((s) => s.lastLessonId);
-  const toggleBookmark = useProgress((s) => s.toggleBookmark);
 
   const filtered = useMemo(() => {
     const q = query.trim();
@@ -37,7 +35,7 @@ export default function LessonsScreen() {
   }, [query]);
 
   const isDark = colorScheme === 'dark';
-  const inputBg = isDark ? '#2A2D2F' : '#F1F3F5';
+  const inputBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)';
   const inputColor = isDark ? '#ECEDEE' : '#11181C';
   const placeholderColor = isDark ? '#9BA1A6' : '#687076';
 
@@ -50,17 +48,11 @@ export default function LessonsScreen() {
         keyboardShouldPersistTaps="handled"
         ListHeaderComponent={
           <View style={styles.header}>
-            <ThemedText type="title" style={styles.bookTitle}>
-              {BOOK_TITLE}
-            </ThemedText>
-            <ThemedText style={styles.bookSubtitle}>
-              {LESSONS.length} دروس
-            </ThemedText>
             <View style={[styles.searchBar, { backgroundColor: inputBg }]}>
-              <Ionicons name="search" size={18} color={placeholderColor} />
+              <Ionicons name="search" size={17} color={placeholderColor} />
               <TextInput
                 style={[styles.searchInput, { color: inputColor }]}
-                placeholder="ابحث عن درس أو مفهوم..."
+                placeholder="Search lessons"
                 placeholderTextColor={placeholderColor}
                 value={query}
                 onChangeText={setQuery}
@@ -70,7 +62,7 @@ export default function LessonsScreen() {
                 <Pressable onPress={() => setQuery('')} hitSlop={10}>
                   <Ionicons
                     name="close-circle"
-                    size={18}
+                    size={17}
                     color={placeholderColor}
                   />
                 </Pressable>
@@ -78,32 +70,33 @@ export default function LessonsScreen() {
             </View>
             {lastLessonId !== null ? (
               <Pressable
-                style={styles.resume}
+                style={[styles.resume, { backgroundColor: inputBg }]}
                 onPress={() =>
                   router.push({
                     pathname: '/lesson/[id]',
                     params: { id: lastLessonId },
                   })
                 }>
-                <Ionicons name="play-circle" size={20} color="#0a7ea4" />
+                <Ionicons name="play-circle" size={18} color="#0a7ea4" />
                 <ThemedText style={styles.resumeText}>
-                  متابعة الدرس {lastLessonId}
+                  Resume Lesson {lastLessonId}
                 </ThemedText>
+                <View style={styles.spacer} />
+                <Ionicons
+                  name="chevron-forward"
+                  size={16}
+                  color={placeholderColor}
+                />
               </Pressable>
             ) : null}
           </View>
         }
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListEmptyComponent={
-          <ThemedText style={styles.empty}>لا توجد نتائج</ThemedText>
+          <ThemedText style={styles.empty}>No results</ThemedText>
         }
         renderItem={({ item }) => (
-          <LessonRow
-            lesson={item}
-            completedMap={completed}
-            bookmarked={Boolean(bookmarks[item.id])}
-            onToggleBookmark={() => toggleBookmark(item.id)}
-          />
+          <LessonRow lesson={item} completedMap={completed} />
         )}
       />
     </ThemedView>
@@ -113,42 +106,47 @@ export default function LessonsScreen() {
 function LessonRow({
   lesson,
   completedMap,
-  bookmarked,
-  onToggleBookmark,
 }: {
   lesson: Lesson;
   completedMap: Record<string, true>;
-  bookmarked: boolean;
-  onToggleBookmark: () => void;
 }) {
-  const { done, total, ratio } = lessonCompletion(
+  const { ratio } = lessonCompletion(
     lesson.id,
     lesson.sections.length,
     completedMap,
   );
+  const isComplete = ratio === 1;
+  const inProgress = ratio > 0 && ratio < 1;
 
   return (
-    <View style={styles.rowWrap}>
-      <Link
-        href={{ pathname: '/lesson/[id]', params: { id: lesson.id } }}
-        asChild>
-        <Pressable
-          style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}>
-          <View style={styles.rowNumber}>
-            <ThemedText style={styles.rowNumberText}>{lesson.id}</ThemedText>
-          </View>
-          <View style={styles.rowBody}>
-            <ThemedText type="subtitle" style={styles.rowTitle}>
-              {lesson.title}
+    <Link
+      href={{ pathname: '/lesson/[id]', params: { id: lesson.id } }}
+      asChild>
+      <Pressable
+        style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}>
+        <View
+          style={[
+            styles.rowNumber,
+            isComplete && styles.rowNumberComplete,
+            inProgress && styles.rowNumberInProgress,
+          ]}>
+          {isComplete ? (
+            <Ionicons name="checkmark" size={18} color="white" />
+          ) : (
+            <ThemedText
+              style={[
+                styles.rowNumberText,
+                inProgress && styles.rowNumberTextInProgress,
+              ]}>
+              {lesson.id}
             </ThemedText>
-            <View style={styles.rowMetaLine}>
-              <ThemedText style={styles.rowMeta}>
-                {done}/{total} أقسام
-              </ThemedText>
-              {ratio === 1 ? (
-                <Ionicons name="checkmark-circle" size={16} color="#16A34A" />
-              ) : null}
-            </View>
+          )}
+        </View>
+        <View style={styles.rowBody}>
+          <ThemedText type="subtitle" style={styles.rowTitle}>
+            {lesson.title}
+          </ThemedText>
+          {inProgress ? (
             <View style={styles.progressTrack}>
               <View
                 style={[
@@ -157,90 +155,66 @@ function LessonRow({
                 ]}
               />
             </View>
-          </View>
-        </Pressable>
-      </Link>
-      <Pressable
-        onPress={onToggleBookmark}
-        hitSlop={12}
-        style={styles.bookmarkBtn}>
-        <Ionicons
-          name={bookmarked ? 'bookmark' : 'bookmark-outline'}
-          size={22}
-          color={bookmarked ? '#F59E0B' : '#9BA1A6'}
-        />
+          ) : null}
+        </View>
+        <Ionicons name="chevron-back" size={18} color="#9BA1A6" />
       </Pressable>
-    </View>
+    </Link>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  list: { paddingHorizontal: 16, paddingVertical: 16 },
-  header: { paddingVertical: 12, marginBottom: 8 },
-  bookTitle: { fontSize: 26, lineHeight: 40, textAlign: 'center' },
-  bookSubtitle: {
-    fontSize: 14,
-    textAlign: 'center',
-    opacity: 0.6,
-    marginTop: 4,
-  },
+  list: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 24 },
+  header: { gap: 10, marginBottom: 12 },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 10,
-    borderRadius: 12,
+    borderRadius: 10,
     gap: 8,
-    marginTop: 16,
   },
-  searchInput: { flex: 1, fontSize: 16, padding: 0 },
+  searchInput: { flex: 1, fontSize: 15, padding: 0 },
   resume: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    paddingVertical: 10,
-    marginTop: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    borderRadius: 10,
   },
-  resumeText: { fontSize: 15, color: '#0a7ea4', fontWeight: '600' },
-  separator: { height: 12 },
+  resumeText: { fontSize: 14, color: '#0a7ea4', fontWeight: '600' },
+  spacer: { flex: 1 },
+  separator: { height: 1, backgroundColor: 'rgba(127,127,127,0.12)' },
   empty: { textAlign: 'center', padding: 32, opacity: 0.6 },
-  rowWrap: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   row: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 14,
-    borderRadius: 14,
-    backgroundColor: 'rgba(127,127,127,0.08)',
-    gap: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 4,
+    gap: 14,
   },
-  rowPressed: { opacity: 0.6 },
+  rowPressed: { opacity: 0.5 },
   rowNumber: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#0a7ea4',
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(127,127,127,0.12)',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  rowNumberText: { color: 'white', fontWeight: '700', fontSize: 16 },
-  rowBody: { flex: 1 },
+  rowNumberComplete: { backgroundColor: '#16A34A' },
+  rowNumberInProgress: { backgroundColor: 'rgba(10,126,164,0.18)' },
+  rowNumberText: { fontWeight: '600', fontSize: 14, opacity: 0.7 },
+  rowNumberTextInProgress: { color: '#0a7ea4', opacity: 1 },
+  rowBody: { flex: 1, gap: 6 },
   rowTitle: { fontSize: 22, lineHeight: 32 },
-  rowMetaLine: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 2,
-  },
-  rowMeta: { fontSize: 13, opacity: 0.6 },
   progressTrack: {
-    height: 4,
-    backgroundColor: 'rgba(127,127,127,0.2)',
-    borderRadius: 2,
-    marginTop: 6,
+    height: 3,
+    backgroundColor: 'rgba(127,127,127,0.18)',
+    borderRadius: 1.5,
     overflow: 'hidden',
   },
   progressFill: { height: '100%', backgroundColor: '#0a7ea4' },
-  bookmarkBtn: { padding: 6 },
 });
