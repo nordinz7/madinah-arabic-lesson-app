@@ -135,14 +135,13 @@ export default function LessonsScreen() {
         }
         renderItem={({ item }) => {
           if (isFiller(item)) {
-            return <View style={{ width: tileSize, height: tileHeight }} />;
+            return <View style={[styles.fillerTile, { height: tileHeight }]} />;
           }
           return (
             <LessonTile
               lesson={item}
               completedMap={completed}
               showTashkeel={showTashkeel}
-              width={tileSize}
               height={tileHeight}
             />
           );
@@ -156,13 +155,11 @@ function LessonTile({
   lesson,
   completedMap,
   showTashkeel,
-  width,
   height,
 }: {
   lesson: Lesson;
   completedMap: Record<string, true>;
   showTashkeel: boolean;
-  width: number;
   height: number;
 }) {
   const { ratio } = lessonCompletion(
@@ -181,7 +178,7 @@ function LessonTile({
       <Pressable
         style={({ pressed }) => [
           styles.tile,
-          { width, height },
+          { height },
           inProgress && styles.tileInProgress,
           isComplete && styles.tileComplete,
           pressed && styles.tilePressed,
@@ -234,9 +231,12 @@ const styles = StyleSheet.create({
   },
   resumeText: { fontSize: 13, color: Brand.accent, fontWeight: '600' },
   empty: { textAlign: 'center', padding: 32, opacity: 0.6 },
-  // Hairline border on every side; adjacent tiles share the visual edge,
-  // negative-margin trick stops the seam from appearing doubled.
+  // flex: 1 makes the tile span its FlatList column wrapper exactly, so
+  // tiles always tile across the full row width regardless of RTL or
+  // safe-area horizontal insets. Negative margins collapse adjacent
+  // hairline borders into single seams.
   tile: {
+    flex: 1,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: 'rgba(127,127,127,0.3)',
     marginRight: -StyleSheet.hairlineWidth,
@@ -249,6 +249,7 @@ const styles = StyleSheet.create({
     gap: 4,
     overflow: 'hidden',
   },
+  fillerTile: { flex: 1 },
   tilePressed: { opacity: 0.45 },
   tileInProgress: { borderColor: Brand.accent },
   tileComplete: {
