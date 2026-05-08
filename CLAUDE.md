@@ -28,7 +28,7 @@ There is no test runner configured yet. If asked to add tests, default to `jest-
 
 ## Architecture
 
-**Routing.** File-based via `expo-router`. The current shape is intentionally a flat Stack (no tabs). Adding tabs/groups means editing `app/_layout.tsx` and creating an `app/(group)/_layout.tsx`. Typed routes are on, so `<Link href={{ pathname: '/lesson/[id]', params: { id } }} />` is type-checked — prefer this over string hrefs.
+**Routing.** File-based via `expo-router`, configured as a Stack at the root with a bottom-tabs group as the anchor and `lesson/[id]` stacking on top. Tabs live in `app/(tabs)/`: `index` (Lessons), `vocabulary`, `practice`, `settings`. Typed routes are on, so `<Link href={{ pathname: '/lesson/[id]', params: { id } }} />` is type-checked — prefer this over string hrefs.
 
 **Data layer.** Lesson content lives in `src/data/lessons.json` and is consumed via `src/data/index.ts`, which:
 
@@ -40,7 +40,16 @@ There is no test runner configured yet. If asked to add tests, default to `jest-
 
 **Section types.** Closed enum: `topic | question | exercise | vocab | grammar`. Labels in both Arabic and English are exported from `src/types.ts` (`SECTION_LABELS_AR`, `SECTION_LABELS_EN`). Color palette per type lives in `src/section-style.ts`. To add a section type, update the union, both label maps, the palette, and check the lessons JSON for any new values introduced.
 
-**UI primitives.** `components/themed-text.tsx`, `components/themed-view.tsx`, `hooks/use-theme-color.ts`, and `constants/theme.ts` are kept from the Expo default template — they wire up automatic light/dark theming via `useColorScheme`. New screens should use `ThemedText`/`ThemedView` rather than raw `Text`/`View` so dark mode works for free. The other Expo template files (`external-link.tsx`, `haptic-tab.tsx`, `components/ui/*`) are currently orphaned — fine to delete if they stay unused as the app grows.
+**State (`src/stores/`).** Two zustand stores, both persisted to AsyncStorage via `zustand/middleware`'s `persist`:
+
+- `useSettings` — `fontScale`, `showTashkeel`, `theme` (`'system' | 'light' | 'dark'`), `audioSpeed`. The Settings tab is the source of truth UI; other screens read these values directly. `theme` flows through `src/hooks/use-effective-color-scheme.ts`, which is what `app/_layout.tsx` and `(tabs)/_layout.tsx` use instead of the template's `useColorScheme` hook.
+- `useProgress` — `completedSections` (keyed `${lessonId}:${order}`), `bookmarkedLessons`, `lastLessonId`. The lesson detail screen calls `setLastLesson(id)` on mount; the lessons list reads `lastLessonId` to render a "Resume" CTA. `lessonCompletion(id, total, completedMap)` returns `{ done, total, ratio }` for progress bars.
+
+**Typography.** `@expo-google-fonts/noto-naskh-arabic` is loaded in `app/_layout.tsx` via `useFonts`, gated by `SplashScreen.preventAutoHideAsync()` until ready. `ThemedText` defaults to `NotoNaskhArabic_400Regular` (or `_700Bold` for `title` / `subtitle` / `defaultSemiBold` types) — system fonts render Arabic with harakat poorly, especially on Android. Don't introduce raw `<Text>`; use `ThemedText` everywhere.
+
+**Tashkeel handling.** `src/arabic.ts` exposes `stripTashkeel` and `maybeStripTashkeel(s, show)` — the lesson detail screen runs all displayed Arabic content through `maybeStripTashkeel` so the user's `showTashkeel` setting takes effect globally. New screens that render lesson content should do the same.
+
+**UI primitives.** `components/themed-text.tsx`, `components/themed-view.tsx`, `hooks/use-theme-color.ts`, and `constants/theme.ts` are the Expo template's theme wiring. The template also left `external-link.tsx`, `haptic-tab.tsx`, and `components/ui/*` — currently orphaned, fine to delete when convenient.
 
 ## Source material
 

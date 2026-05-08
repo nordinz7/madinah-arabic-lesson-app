@@ -6,6 +6,8 @@ Open-source Expo (React Native) mobile app for learning Arabic from the **Madina
 
 Early scaffold — the app currently renders a typed lesson outline (titles + section headings) for **Madinah Book 1**. Full lesson content is being digitized lesson-by-lesson from the source PDFs.
 
+See **[docs/ROADMAP.md](docs/ROADMAP.md)** for the full plan, phased milestones, and the necessary UI/UX features the app is being built around.
+
 ## Stack
 
 - Expo SDK 54, React Native 0.81, React 19

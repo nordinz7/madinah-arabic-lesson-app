@@ -17,10 +17,15 @@ export function ThemedText({
 }: ThemedTextProps) {
   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
 
+  const arabicFont =
+    type === 'title' || type === 'subtitle' || type === 'defaultSemiBold'
+      ? 'NotoNaskhArabic_700Bold'
+      : 'NotoNaskhArabic_400Regular';
+
   return (
     <Text
       style={[
-        { color },
+        { color, fontFamily: arabicFont },
         type === 'default' ? styles.default : undefined,
         type === 'title' ? styles.title : undefined,
         type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
@@ -36,21 +41,19 @@ export function ThemedText({
 const styles = StyleSheet.create({
   default: {
     fontSize: 16,
-    lineHeight: 24,
+    lineHeight: 26,
   },
   defaultSemiBold: {
     fontSize: 16,
-    lineHeight: 24,
-    fontWeight: '600',
+    lineHeight: 26,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    lineHeight: 32,
+    fontSize: 30,
+    lineHeight: 44,
   },
   subtitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    lineHeight: 32,
   },
   link: {
     lineHeight: 30,
