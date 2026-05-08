@@ -1,4 +1,10 @@
 import {
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+} from '@expo-google-fonts/inter';
+import {
   NotoNaskhArabic_400Regular,
   NotoNaskhArabic_700Bold,
 } from '@expo-google-fonts/noto-naskh-arabic';
@@ -33,6 +39,10 @@ export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
     NotoNaskhArabic_400Regular,
     NotoNaskhArabic_700Bold,
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
   });
 
   useEffect(() => {
