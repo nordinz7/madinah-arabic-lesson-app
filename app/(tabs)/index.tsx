@@ -12,14 +12,23 @@ import {
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { toArabicNumber } from '@/src/arabic';
+import { maybeStripTashkeel, toArabicNumber } from '@/src/arabic';
 import { LESSONS } from '@/src/data';
 import { useEffectiveColorScheme } from '@/src/hooks/use-effective-color-scheme';
-import { Fonts, Palette, Radius, Semantic, Space } from '@/src/design';
+import {
+  Fonts,
+  Palette,
+  Radius,
+  Semantic,
+  type SemanticPalette,
+  Space,
+} from '@/src/design';
 import { lessonCompletion, useProgress } from '@/src/stores/progress';
+import { useSettings } from '@/src/stores/settings';
 import type { Lesson } from '@/src/types';
 
 const MIN_TILE = 78;
+const TILE_GAP = 4;
 
 type FillerItem = { __filler: true; id: string };
 type GridItem = Lesson | FillerItem;
@@ -27,13 +36,12 @@ const isFiller = (item: GridItem): item is FillerItem => '__filler' in item;
 
 export default function LessonsScreen() {
   const router = useRouter();
-  const { width, height } = useWindowDimensions();
-  const cols = Math.max(2, Math.floor(width / MIN_TILE));
-  const tileSize = width / cols;
+  const { width } = useWindowDimensions();
 
   const [query, setQuery] = useState('');
   const colorScheme = useEffectiveColorScheme();
   const palette = Semantic[colorScheme];
+  const showTashkeel = useSettings((s) => s.showTashkeel);
 
   const completed = useProgress((s) => s.completedSections);
   const lastLessonId = useProgress((s) => s.lastLessonId);
@@ -48,6 +56,16 @@ export default function LessonsScreen() {
     );
   }, [query]);
 
+  // Compute grid metrics. cols flexes with screen width; tile width comes
+  // from a usable area = screenWidth - outer padding - inter-tile gaps.
+  const HORIZONTAL_PAD = Space[3];
+  const usable = width - HORIZONTAL_PAD * 2;
+  const cols = Math.max(2, Math.floor((usable + TILE_GAP) / (MIN_TILE + TILE_GAP)));
+  const tileSize = Math.floor(
+    (usable - TILE_GAP * (cols - 1)) / cols,
+  );
+
+  // Pad with invisible tiles so the last row stays square.
   const gridData = useMemo<GridItem[]>(() => {
     const remainder = filtered.length % cols;
     if (remainder === 0) return filtered;
@@ -61,71 +79,57 @@ export default function LessonsScreen() {
     ];
   }, [filtered, cols]);
 
-  const rows = Math.ceil(filtered.length / cols);
-  const APPROX_CHROME = 280;
-  const availableHeight = Math.max(0, height - APPROX_CHROME);
-  const naturalTileHeight = rows > 0 ? availableHeight / rows : tileSize;
-  const tileHeight = Math.max(
-    tileSize,
-    Math.min(tileSize * 1.25, naturalTileHeight),
-  );
+  // The "feature" card target — last visited if known, else Lesson 1.
+  const featureLessonId =
+    lastLessonId !== null && filtered.some((l) => l.id === lastLessonId)
+      ? lastLessonId
+      : filtered[0]?.id;
+  const featureLesson = featureLessonId
+    ? filtered.find((l) => l.id === featureLessonId)
+    : null;
+  const isFreshStart = lastLessonId === null;
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, { backgroundColor: palette.bg }]}>
       <FlatList<GridItem>
         key={`grid-${cols}`}
         data={gridData}
         keyExtractor={(item) => String(item.id)}
         numColumns={cols}
         contentContainerStyle={styles.listContent}
+        columnWrapperStyle={styles.columnWrapper}
         keyboardShouldPersistTaps="handled"
         ListHeaderComponent={
-          <View style={styles.header}>
-            <View style={[styles.searchBar, { backgroundColor: palette.fillTertiary }]}>
-              <Ionicons name="search" size={17} color={palette.textTertiary} />
-              <TextInput
-                style={[
-                  styles.searchInput,
-                  { color: palette.text, fontFamily: Fonts.latin },
-                ]}
-                placeholder="Search lessons"
-                placeholderTextColor={palette.placeholder}
+          <View>
+            <View style={styles.headerPad}>
+              <SearchBar
                 value={query}
-                onChangeText={setQuery}
-                returnKeyType="search"
+                onChange={setQuery}
+                palette={palette}
               />
-              {query ? (
-                <Pressable onPress={() => setQuery('')} hitSlop={10}>
-                  <Ionicons
-                    name="close-circle"
-                    size={17}
-                    color={palette.textTertiary}
-                  />
-                </Pressable>
+              {featureLesson && !query ? (
+                <ContinueCard
+                  lesson={featureLesson}
+                  fresh={isFreshStart}
+                  showTashkeel={showTashkeel}
+                  completedMap={completed}
+                  palette={palette}
+                  onPress={() =>
+                    router.push({
+                      pathname: '/lesson/[id]',
+                      params: { id: featureLesson.id },
+                    })
+                  }
+                />
               ) : null}
+              <ThemedText
+                variant="caption2"
+                weight="semibold"
+                tone="tertiary"
+                style={styles.gridHeader}>
+                ALL LESSONS
+              </ThemedText>
             </View>
-            {lastLessonId !== null ? (
-              <Pressable
-                style={({ pressed }) => [
-                  styles.resume,
-                  { backgroundColor: Palette.brandTint },
-                  pressed && { opacity: 0.7 },
-                ]}
-                onPress={() =>
-                  router.push({
-                    pathname: '/lesson/[id]',
-                    params: { id: lastLessonId },
-                  })
-                }>
-                <Ionicons name="play" size={14} color={Palette.brand} />
-                <ThemedText
-                  variant="footnote"
-                  weight="semibold"
-                  style={{ color: Palette.brand }}>
-                  Continue Lesson {lastLessonId}
-                </ThemedText>
-              </Pressable>
-            ) : null}
           </View>
         }
         ListEmptyComponent={
@@ -138,14 +142,14 @@ export default function LessonsScreen() {
         }
         renderItem={({ item }) => {
           if (isFiller(item)) {
-            return <View style={[styles.fillerTile, { height: tileHeight }]} />;
+            return <View style={{ width: tileSize, height: tileSize }} />;
           }
           return (
             <LessonTile
               lesson={item}
               completedMap={completed}
-              height={tileHeight}
-              borderColor={palette.separator}
+              size={tileSize}
+              palette={palette}
             />
           );
         }}
@@ -154,16 +158,145 @@ export default function LessonsScreen() {
   );
 }
 
+function SearchBar({
+  value,
+  onChange,
+  palette,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  palette: SemanticPalette;
+}) {
+  return (
+    <View style={[styles.searchBar, { backgroundColor: palette.fillTertiary }]}>
+      <Ionicons name="search" size={17} color={palette.textTertiary} />
+      <TextInput
+        style={[
+          styles.searchInput,
+          { color: palette.text, fontFamily: Fonts.latin },
+        ]}
+        placeholder="Search lessons"
+        placeholderTextColor={palette.placeholder}
+        value={value}
+        onChangeText={onChange}
+        returnKeyType="search"
+      />
+      {value ? (
+        <Pressable onPress={() => onChange('')} hitSlop={10}>
+          <Ionicons
+            name="close-circle"
+            size={17}
+            color={palette.textTertiary}
+          />
+        </Pressable>
+      ) : null}
+    </View>
+  );
+}
+
+function ContinueCard({
+  lesson,
+  fresh,
+  showTashkeel,
+  completedMap,
+  palette,
+  onPress,
+}: {
+  lesson: Lesson;
+  fresh: boolean;
+  showTashkeel: boolean;
+  completedMap: Record<string, true>;
+  palette: SemanticPalette;
+  onPress: () => void;
+}) {
+  const { done, total, ratio } = lessonCompletion(
+    lesson.id,
+    lesson.sections.length,
+    completedMap,
+  );
+  const pct = Math.round(ratio * 100);
+  const kicker = fresh ? 'START HERE' : 'CONTINUE LEARNING';
+  const titleSection = lesson.sections.find((s) => s.type === 'topic');
+
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.featureCard,
+        { backgroundColor: Palette.brandTint },
+        pressed && { opacity: 0.85 },
+      ]}>
+      <View style={styles.featureHeader}>
+        <ThemedText
+          variant="caption2"
+          weight="semibold"
+          style={[styles.featureKicker, { color: Palette.brand }]}>
+          {kicker}
+        </ThemedText>
+        <Ionicons name="chevron-forward" size={18} color={Palette.brand} />
+      </View>
+      <View style={styles.featureBody}>
+        <ThemedText
+          script="arabic"
+          weight="bold"
+          style={[styles.featureNumeral, { color: Palette.brand }]}>
+          {toArabicNumber(lesson.id)}
+        </ThemedText>
+        <View style={styles.featureMain}>
+          <ThemedText
+            script="arabic"
+            weight="bold"
+            variant="title2"
+            numberOfLines={1}>
+            {maybeStripTashkeel(lesson.title, showTashkeel)}
+          </ThemedText>
+          {titleSection ? (
+            <ThemedText
+              variant="footnote"
+              tone="secondary"
+              numberOfLines={1}
+              style={styles.featureSub}>
+              {titleSection.translit
+                ? `${titleSection.translit} · ${titleSection.meaning ?? ''}`
+                : titleSection.meaning ?? ''}
+            </ThemedText>
+          ) : null}
+        </View>
+      </View>
+      <View style={styles.featureProgress}>
+        <View
+          style={[
+            styles.featureTrack,
+            { backgroundColor: 'rgba(120,120,128,0.20)' },
+          ]}>
+          <View
+            style={[
+              styles.featureFill,
+              { width: `${pct}%`, backgroundColor: Palette.brand },
+            ]}
+          />
+        </View>
+        <ThemedText
+          variant="caption1"
+          weight="semibold"
+          style={{ color: Palette.brand, minWidth: 60, textAlign: 'right' }}>
+          {fresh ? 'Begin' : `${done}/${total} · ${pct}%`}
+        </ThemedText>
+      </View>
+    </Pressable>
+  );
+}
+
 function LessonTile({
   lesson,
   completedMap,
-  height,
-  borderColor,
+  size,
+  palette,
 }: {
   lesson: Lesson;
   completedMap: Record<string, true>;
-  height: number;
-  borderColor: string;
+  size: number;
+  palette: SemanticPalette;
 }) {
   const { ratio } = lessonCompletion(
     lesson.id,
@@ -172,7 +305,18 @@ function LessonTile({
   );
   const isComplete = ratio === 1;
   const inProgress = ratio > 0 && ratio < 1;
-  const numeralSize = Math.floor(height * 0.58);
+  const numeralSize = Math.floor(size * 0.5);
+
+  const bg = isComplete
+    ? Palette.greenSoft
+    : inProgress
+    ? Palette.brandTint
+    : palette.fillTertiary;
+  const numeralColor = isComplete
+    ? Palette.green
+    : inProgress
+    ? Palette.brand
+    : palette.text;
 
   return (
     <Link
@@ -181,34 +325,41 @@ function LessonTile({
       <Pressable
         style={({ pressed }) => [
           styles.tile,
-          { height, borderColor },
-          inProgress && styles.tileInProgress,
-          isComplete && styles.tileComplete,
-          pressed && styles.tilePressed,
+          {
+            width: size,
+            height: size,
+            backgroundColor: bg,
+          },
+          pressed && { opacity: 0.55 },
         ]}>
         <ThemedText
           script="arabic"
           weight="bold"
-          style={[
-            styles.tileNumber,
-            { fontSize: numeralSize, lineHeight: numeralSize * 1.05 },
-            isComplete && { color: Palette.green },
-          ]}>
+          style={{
+            fontSize: numeralSize,
+            lineHeight: numeralSize * 1.05,
+            color: numeralColor,
+          }}>
           {toArabicNumber(lesson.id)}
         </ThemedText>
-        <View
-          style={[
-            styles.progressTrack,
-            { backgroundColor: 'rgba(120,120,128,0.18)' },
-          ]}>
-          <View
-            style={[
-              styles.progressFill,
-              { width: `${Math.round(ratio * 100)}%` },
-              isComplete && styles.progressFillComplete,
-            ]}
-          />
-        </View>
+        {inProgress ? (
+          <View style={[styles.tileBar, { backgroundColor: 'rgba(120,120,128,0.20)' }]}>
+            <View
+              style={[
+                styles.tileBarFill,
+                {
+                  width: `${Math.round(ratio * 100)}%`,
+                  backgroundColor: Palette.brand,
+                },
+              ]}
+            />
+          </View>
+        ) : null}
+        {isComplete ? (
+          <View style={styles.tileCheck}>
+            <Ionicons name="checkmark" size={11} color="white" />
+          </View>
+        ) : null}
       </Pressable>
     </Link>
   );
@@ -217,11 +368,10 @@ function LessonTile({
 const styles = StyleSheet.create({
   container: { flex: 1 },
   listContent: { paddingBottom: Space[6] },
-  header: {
-    gap: Space[2],
+  headerPad: {
     paddingHorizontal: Space[3],
     paddingTop: Space[2],
-    paddingBottom: Space[3],
+    gap: Space[3],
   },
   searchBar: {
     flexDirection: 'row',
@@ -232,34 +382,66 @@ const styles = StyleSheet.create({
     gap: Space[2],
   },
   searchInput: { flex: 1, fontSize: 15, padding: 0 },
-  resume: {
+  empty: { textAlign: 'center', paddingVertical: Space[8] },
+
+  // Feature / continue card -------------------------------------------------
+  featureCard: {
+    borderRadius: Radius.xl,
+    padding: Space[4],
+    gap: Space[3],
+  },
+  featureHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  featureKicker: { letterSpacing: 1.2 },
+  featureBody: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Space[3],
+  },
+  featureNumeral: {
+    fontSize: 64,
+    lineHeight: 64,
+    minWidth: 64,
+    textAlign: 'center',
+  },
+  featureMain: { flex: 1, gap: 2 },
+  featureSub: { fontStyle: 'italic' },
+  featureProgress: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Space[2],
-    paddingHorizontal: Space[3],
-    paddingVertical: Space[2] + 2,
-    borderRadius: Radius.md,
-    alignSelf: 'flex-start',
   },
-  empty: { textAlign: 'center', paddingVertical: Space[8] },
-  tile: {
+  featureTrack: {
     flex: 1,
-    borderWidth: StyleSheet.hairlineWidth,
-    marginRight: -StyleSheet.hairlineWidth,
-    marginBottom: -StyleSheet.hairlineWidth,
-    paddingHorizontal: Space[1],
-    paddingTop: Space[2],
-    paddingBottom: Space[2],
+    height: 4,
+    borderRadius: Radius.full,
+    overflow: 'hidden',
+  },
+  featureFill: { height: '100%' },
+
+  // Grid header -------------------------------------------------------------
+  gridHeader: {
+    letterSpacing: 1.2,
+    marginTop: Space[2],
+    marginBottom: -Space[2],
+  },
+
+  // Grid tiles --------------------------------------------------------------
+  columnWrapper: {
+    paddingHorizontal: Space[3],
+    gap: TILE_GAP,
+    marginBottom: TILE_GAP,
+  },
+  tile: {
+    borderRadius: Radius.md,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
   },
-  fillerTile: { flex: 1 },
-  tilePressed: { opacity: 0.5 },
-  tileInProgress: { borderColor: Palette.brand },
-  tileComplete: { borderColor: Palette.green, backgroundColor: Palette.greenSoft },
-  tileNumber: { opacity: 0.92 },
-  progressTrack: {
+  tileBar: {
     position: 'absolute',
     bottom: Space[2],
     left: Space[3],
@@ -268,6 +450,16 @@ const styles = StyleSheet.create({
     borderRadius: Radius.full,
     overflow: 'hidden',
   },
-  progressFill: { height: '100%', backgroundColor: Palette.brand },
-  progressFillComplete: { backgroundColor: Palette.green },
+  tileBarFill: { height: '100%' },
+  tileCheck: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    width: 18,
+    height: 18,
+    borderRadius: Radius.full,
+    backgroundColor: Palette.green,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
