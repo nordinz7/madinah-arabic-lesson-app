@@ -41,3 +41,7 @@ app-example
 # generated native folders
 /ios
 /android
+
+# Reference PDFs — see README "Source material" for how contributors get them.
+# Not committed: copyright unclear for redistribution + 22MB+ would bloat history.
+*.pdf
