@@ -13,18 +13,13 @@ import {
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Brand } from '@/constants/theme';
-import {
-  maybeStripTashkeel,
-  stripLessonPrefix,
-  toArabicNumber,
-} from '@/src/arabic';
+import { toArabicNumber } from '@/src/arabic';
 import { LESSONS } from '@/src/data';
 import { useEffectiveColorScheme } from '@/src/hooks/use-effective-color-scheme';
 import { lessonCompletion, useProgress } from '@/src/stores/progress';
-import { useSettings } from '@/src/stores/settings';
 import type { Lesson } from '@/src/types';
 
-const MIN_TILE = 100; // px; columns derived from screen width
+const MIN_TILE = 78; // px; columns derived from screen width, no upper cap
 
 type FillerItem = { __filler: true; id: string };
 type GridItem = Lesson | FillerItem;
@@ -34,7 +29,7 @@ const isFiller = (item: GridItem): item is FillerItem =>
 export default function LessonsScreen() {
   const router = useRouter();
   const { width, height } = useWindowDimensions();
-  const cols = Math.max(3, Math.floor(width / MIN_TILE));
+  const cols = Math.max(2, Math.floor(width / MIN_TILE));
   const tileSize = width / cols;
 
   const [query, setQuery] = useState('');
@@ -42,7 +37,6 @@ export default function LessonsScreen() {
 
   const completed = useProgress((s) => s.completedSections);
   const lastLessonId = useProgress((s) => s.lastLessonId);
-  const showTashkeel = useSettings((s) => s.showTashkeel);
 
   const filtered = useMemo(() => {
     const q = query.trim();
@@ -141,7 +135,6 @@ export default function LessonsScreen() {
             <LessonTile
               lesson={item}
               completedMap={completed}
-              showTashkeel={showTashkeel}
               height={tileHeight}
             />
           );
@@ -154,12 +147,10 @@ export default function LessonsScreen() {
 function LessonTile({
   lesson,
   completedMap,
-  showTashkeel,
   height,
 }: {
   lesson: Lesson;
   completedMap: Record<string, true>;
-  showTashkeel: boolean;
   height: number;
 }) {
   const { ratio } = lessonCompletion(
@@ -169,7 +160,8 @@ function LessonTile({
   );
   const isComplete = ratio === 1;
   const inProgress = ratio > 0 && ratio < 1;
-  const ordinal = stripLessonPrefix(lesson.title);
+  // Numeral fontSize scales with tile height so the digit always dominates.
+  const numeralSize = Math.floor(height * 0.6);
 
   return (
     <Link
@@ -183,11 +175,12 @@ function LessonTile({
           isComplete && styles.tileComplete,
           pressed && styles.tilePressed,
         ]}>
-        <ThemedText style={styles.tileNumber}>
+        <ThemedText
+          style={[
+            styles.tileNumber,
+            { fontSize: numeralSize, lineHeight: numeralSize * 1.05 },
+          ]}>
           {toArabicNumber(lesson.id)}
-        </ThemedText>
-        <ThemedText style={styles.tileOrdinal} numberOfLines={1}>
-          {maybeStripTashkeel(ordinal, showTashkeel)}
         </ThemedText>
         <View style={styles.progressTrack}>
           <View
@@ -256,20 +249,16 @@ const styles = StyleSheet.create({
     borderColor: Brand.success,
     backgroundColor: Brand.successMuted,
   },
-  tileNumber: { fontSize: 30, lineHeight: 36, opacity: 0.9 },
-  tileOrdinal: {
-    fontSize: 10,
-    lineHeight: 13,
-    opacity: 0.55,
-    maxWidth: '95%',
-  },
+  tileNumber: { opacity: 0.92 },
   progressTrack: {
-    width: '60%',
+    position: 'absolute',
+    bottom: 6,
+    left: 8,
+    right: 8,
     height: 2,
     borderRadius: 1,
     backgroundColor: 'rgba(127,127,127,0.18)',
     overflow: 'hidden',
-    marginTop: 2,
   },
   progressFill: { height: '100%', backgroundColor: Brand.accent },
   progressFillComplete: { backgroundColor: Brand.success },
