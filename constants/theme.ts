@@ -1,11 +1,27 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
-
 import { Platform } from 'react-native';
 
-const tintColorLight = '#0a7ea4';
+/**
+ * Brand-level color tokens used app-wide. Reference these instead of
+ * inlining hex strings; that way any palette change touches one file.
+ */
+export const Brand = {
+  accent: '#0a7ea4',
+  accentMuted: 'rgba(10,126,164,0.12)',
+  success: '#16A34A',
+  successText: '#15803D',
+  successMuted: 'rgba(22,163,74,0.10)',
+  warning: '#F59E0B',
+  danger: '#DC2626',
+  /** Femnine accent (used for gender chips, etc). */
+  feminine: '#BE185D',
+  feminineMuted: 'rgba(244,114,182,0.16)',
+  /** Neutral icon / muted-text color, identical in light + dark. */
+  muted: '#9BA1A6',
+  /** Slightly stronger muted, used for chip captions, hints, etc. */
+  mutedStrong: '#6B7280',
+};
+
+const tintColorLight = Brand.accent;
 const tintColorDark = '#fff';
 
 export const Colors = {
@@ -21,8 +37,8 @@ export const Colors = {
     text: '#ECEDEE',
     background: '#151718',
     tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
+    icon: Brand.muted,
+    tabIconDefault: Brand.muted,
     tabIconSelected: tintColorDark,
   },
 };

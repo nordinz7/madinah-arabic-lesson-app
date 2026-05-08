@@ -4,6 +4,7 @@ import { FlatList, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { Brand } from '@/constants/theme';
 import { LESSONS } from '@/src/data';
 import type { VocabItem } from '@/src/types';
 
@@ -31,7 +32,7 @@ export default function VocabularyScreen() {
           <Ionicons
             name="library-outline"
             size={56}
-            color="#9BA1A6"
+            color={Brand.muted}
             style={styles.emptyIcon}
           />
           <ThemedText type="subtitle" style={styles.emptyTitle}>

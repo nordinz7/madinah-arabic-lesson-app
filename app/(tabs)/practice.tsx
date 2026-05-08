@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { Brand } from '@/constants/theme';
 
 export default function PracticeScreen() {
   return (
@@ -11,7 +12,7 @@ export default function PracticeScreen() {
         <Ionicons
           name="repeat-outline"
           size={56}
-          color="#9BA1A6"
+          color={Brand.muted}
           style={styles.emptyIcon}
         />
         <ThemedText type="subtitle" style={styles.emptyTitle}>

@@ -3,6 +3,7 @@ import { Alert, Pressable, ScrollView, StyleSheet, Switch, View } from 'react-na
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { Brand } from '@/constants/theme';
 import { useEffectiveColorScheme } from '@/src/hooks/use-effective-color-scheme';
 import { useProgress } from '@/src/stores/progress';
 import {
@@ -21,7 +22,6 @@ const THEME_OPTIONS: { value: ThemePreference; label: string }[] = [
 
 export default function SettingsScreen() {
   const colorScheme = useEffectiveColorScheme();
-  const accent = '#0a7ea4';
   const cardBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)';
 
   const fontScale = useSettings((s) => s.fontScale);
@@ -74,7 +74,7 @@ export default function SettingsScreen() {
             <Switch
               value={showTashkeel}
               onValueChange={setShowTashkeel}
-              trackColor={{ false: '#9BA1A6', true: accent }}
+              trackColor={{ false: Brand.muted, true: Brand.accent }}
             />
           </Row>
         </Section>
@@ -104,7 +104,7 @@ export default function SettingsScreen() {
 
         <Section title="البيانات">
           <Pressable onPress={onResetPress} style={[styles.dangerRow, { backgroundColor: cardBg }]}>
-            <Ionicons name="trash-outline" size={20} color="#DC2626" />
+            <Ionicons name="trash-outline" size={20} color={Brand.danger} />
             <ThemedText style={styles.dangerText}>إعادة تعيين التقدم</ThemedText>
           </Pressable>
         </Section>
@@ -164,7 +164,7 @@ function Stepper({
         disabled && styles.stepperBtnDisabled,
         pressed && !disabled && styles.stepperBtnPressed,
       ]}>
-      <Ionicons name={icon} size={20} color={disabled ? '#9BA1A6' : '#0a7ea4'} />
+      <Ionicons name={icon} size={20} color={disabled ? Brand.muted : Brand.accent} />
     </Pressable>
   );
 }
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   segment: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 },
-  segmentActive: { backgroundColor: '#0a7ea4' },
+  segmentActive: { backgroundColor: Brand.accent },
   segmentText: { fontSize: 14 },
   segmentTextActive: { color: 'white', fontWeight: '600' },
   dangerRow: {
@@ -256,6 +256,6 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 12,
   },
-  dangerText: { fontSize: 16, color: '#DC2626' },
+  dangerText: { fontSize: 16, color: Brand.danger },
   footer: { textAlign: 'center', opacity: 0.4, fontSize: 12, marginTop: 16 },
 });

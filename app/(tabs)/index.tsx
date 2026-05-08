@@ -11,6 +11,7 @@ import {
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { Brand } from '@/constants/theme';
 import { LESSONS } from '@/src/data';
 import { useEffectiveColorScheme } from '@/src/hooks/use-effective-color-scheme';
 import { lessonCompletion, useProgress } from '@/src/stores/progress';
@@ -37,7 +38,7 @@ export default function LessonsScreen() {
   const isDark = colorScheme === 'dark';
   const inputBg = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)';
   const inputColor = isDark ? '#ECEDEE' : '#11181C';
-  const placeholderColor = isDark ? '#9BA1A6' : '#687076';
+  const placeholderColor = isDark ? Brand.muted : '#687076';
 
   return (
     <ThemedView style={styles.container}>
@@ -77,7 +78,7 @@ export default function LessonsScreen() {
                     params: { id: lastLessonId },
                   })
                 }>
-                <Ionicons name="play-circle" size={18} color="#0a7ea4" />
+                <Ionicons name="play-circle" size={18} color={Brand.accent} />
                 <ThemedText style={styles.resumeText}>
                   Resume Lesson {lastLessonId}
                 </ThemedText>
@@ -157,7 +158,7 @@ function LessonRow({
             </View>
           ) : null}
         </View>
-        <Ionicons name="chevron-back" size={18} color="#9BA1A6" />
+        <Ionicons name="chevron-back" size={18} color={Brand.muted} />
       </Pressable>
     </Link>
   );
@@ -184,7 +185,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 10,
   },
-  resumeText: { fontSize: 14, color: '#0a7ea4', fontWeight: '600' },
+  resumeText: { fontSize: 14, color: Brand.accent, fontWeight: '600' },
   spacer: { flex: 1 },
   separator: { height: 1, backgroundColor: 'rgba(127,127,127,0.12)' },
   empty: { textAlign: 'center', padding: 32, opacity: 0.6 },
@@ -204,10 +205,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  rowNumberComplete: { backgroundColor: '#16A34A' },
+  rowNumberComplete: { backgroundColor: Brand.success },
   rowNumberInProgress: { backgroundColor: 'rgba(10,126,164,0.18)' },
   rowNumberText: { fontWeight: '600', fontSize: 14, opacity: 0.7 },
-  rowNumberTextInProgress: { color: '#0a7ea4', opacity: 1 },
+  rowNumberTextInProgress: { color: Brand.accent, opacity: 1 },
   rowBody: { flex: 1, gap: 6 },
   rowTitle: { fontSize: 22, lineHeight: 32 },
   progressTrack: {
@@ -216,5 +217,5 @@ const styles = StyleSheet.create({
     borderRadius: 1.5,
     overflow: 'hidden',
   },
-  progressFill: { height: '100%', backgroundColor: '#0a7ea4' },
+  progressFill: { height: '100%', backgroundColor: Brand.accent },
 });

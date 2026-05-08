@@ -6,6 +6,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { InterlinearText } from '@/components/interlinear-text';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { Brand } from '@/constants/theme';
 import { maybeStripTashkeel } from '@/src/arabic';
 import { getLesson } from '@/src/data';
 import { SECTION_PALETTE } from '@/src/section-style';
@@ -124,7 +125,7 @@ function SectionCard({
           <Ionicons
             name={completed ? 'checkmark-circle' : 'ellipse-outline'}
             size={22}
-            color={completed ? '#16A34A' : '#9BA1A6'}
+            color={completed ? Brand.success : Brand.muted}
           />
         </Pressable>
       </View>
@@ -187,6 +188,21 @@ function NotesBlock({ notes }: { notes: string }) {
   );
 }
 
+function SubBlock({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <View style={styles.subBlock}>
+      <ThemedText style={styles.subHeading}>{title}</ThemedText>
+      {children}
+    </View>
+  );
+}
+
 function ExamplesBlock({
   examples,
   fontScale,
@@ -197,8 +213,7 @@ function ExamplesBlock({
   arabic: (s: string) => string;
 }) {
   return (
-    <View style={styles.subBlock}>
-      <ThemedText style={styles.subHeading}>Examples</ThemedText>
+    <SubBlock title="Examples">
       {examples.map((ex, i) => (
         <View key={i} style={styles.exampleRow}>
           <PhraseLine
@@ -220,7 +235,7 @@ function ExamplesBlock({
           ) : null}
         </View>
       ))}
-    </View>
+    </SubBlock>
   );
 }
 
@@ -263,8 +278,7 @@ function VocabBlock({
   arabic: (s: string) => string;
 }) {
   return (
-    <View style={styles.subBlock}>
-      <ThemedText style={styles.subHeading}>المفردات · Vocabulary</ThemedText>
+    <SubBlock title="Vocabulary">
       <View style={styles.vocabGrid}>
         {vocab.map((v, i) => (
           <View key={i} style={styles.vocabRow}>
@@ -314,7 +328,7 @@ function VocabBlock({
           </View>
         ))}
       </View>
-    </View>
+    </SubBlock>
   );
 }
 
@@ -328,8 +342,7 @@ function ItemsBlock({
   arabic: (s: string) => string;
 }) {
   return (
-    <View style={styles.subBlock}>
-      <ThemedText style={styles.subHeading}>التَّمْرِين · Exercise items</ThemedText>
+    <SubBlock title="Exercise items">
       {items.map((item, i) => (
         <ExerciseRow
           key={i}
@@ -339,7 +352,7 @@ function ItemsBlock({
           arabic={arabic}
         />
       ))}
-    </View>
+    </SubBlock>
   );
 }
 
@@ -370,7 +383,7 @@ function ExerciseRow({
           />
           {item.hint ? (
             <View style={styles.hintChip}>
-              <Ionicons name="image-outline" size={12} color="#6B7280" />
+              <Ionicons name="image-outline" size={12} color={Brand.mutedStrong} />
               <ThemedText style={styles.hintChipText}>
                 {arabic(item.hint)}
               </ThemedText>
@@ -393,7 +406,7 @@ function ExerciseRow({
           </View>
           {!revealed ? (
             <View style={styles.answerOverlay}>
-              <Ionicons name="eye-outline" size={14} color="#0a7ea4" />
+              <Ionicons name="eye-outline" size={14} color={Brand.accent} />
               <ThemedText style={styles.answerOverlayText}>
                 Tap to reveal answer
               </ThemedText>
@@ -426,7 +439,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     overflow: 'hidden',
   },
-  progressFill: { height: '100%', backgroundColor: '#0a7ea4' },
+  progressFill: { height: '100%', backgroundColor: Brand.accent },
   progressText: { fontSize: 13, opacity: 0.7 },
   sections: { marginTop: 8 },
   section: {
@@ -468,7 +481,7 @@ const styles = StyleSheet.create({
     width: 5,
     height: 5,
     borderRadius: 2.5,
-    backgroundColor: '#0a7ea4',
+    backgroundColor: Brand.accent,
     marginTop: 8,
   },
   bulletText: { flex: 1 },
@@ -525,8 +538,8 @@ const styles = StyleSheet.create({
   genderChipM: { backgroundColor: 'rgba(10,126,164,0.12)' },
   genderChipF: { backgroundColor: 'rgba(244,114,182,0.16)' },
   genderChipText: { fontSize: 10, fontWeight: '700' },
-  genderChipTextM: { color: '#0a7ea4' },
-  genderChipTextF: { color: '#BE185D' },
+  genderChipTextM: { color: Brand.accent },
+  genderChipTextF: { color: Brand.feminine },
   exerciseRow: {
     paddingVertical: 12,
     borderBottomWidth: StyleSheet.hairlineWidth,
@@ -553,7 +566,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     marginTop: 6,
   },
-  hintChipText: { fontSize: 12, color: '#6B7280' },
+  hintChipText: { fontSize: 12, color: Brand.mutedStrong },
   answerWrap: {
     marginTop: 8,
     borderRadius: 10,
@@ -567,7 +580,7 @@ const styles = StyleSheet.create({
     minHeight: 40,
     justifyContent: 'center',
   },
-  answerText: { color: '#15803D' },
+  answerText: { color: Brand.successText },
   answerTextHidden: { opacity: 0 },
   answerOverlay: {
     position: 'absolute',
@@ -582,5 +595,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 6,
   },
-  answerOverlayText: { fontSize: 12, color: '#0a7ea4', fontWeight: '600' },
+  answerOverlayText: { fontSize: 12, color: Brand.accent, fontWeight: '600' },
 });

@@ -1,12 +1,13 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
 
+import { Brand } from '@/constants/theme';
 import { useEffectiveColorScheme } from '@/src/hooks/use-effective-color-scheme';
 
 export default function TabsLayout() {
   const colorScheme = useEffectiveColorScheme();
-  const tint = colorScheme === 'dark' ? '#fff' : '#0a7ea4';
-  const inactive = colorScheme === 'dark' ? '#9BA1A6' : '#687076';
+  const tint = colorScheme === 'dark' ? '#fff' : Brand.accent;
+  const inactive = colorScheme === 'dark' ? Brand.muted : '#687076';
 
   return (
     <Tabs
