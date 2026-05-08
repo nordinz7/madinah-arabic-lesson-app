@@ -27,11 +27,7 @@ import { lessonCompletion, useProgress } from '@/src/stores/progress';
 import type { Lesson } from '@/src/types';
 
 const MIN_TILE = 100;
-const TILE_GAP = 6;
-
-type FillerItem = { __filler: true; id: string };
-type GridItem = Lesson | FillerItem;
-const isFiller = (item: GridItem): item is FillerItem => '__filler' in item;
+const TILE_GAP = 10;
 
 export default function LessonsScreen() {
   const router = useRouter();
@@ -57,50 +53,42 @@ export default function LessonsScreen() {
   const HORIZONTAL_PAD = Space[3];
   const usable = width - HORIZONTAL_PAD * 2;
   const cols = Math.max(2, Math.floor((usable + TILE_GAP) / (MIN_TILE + TILE_GAP)));
-  const tileWidth = Math.floor((usable - TILE_GAP * (cols - 1)) / cols);
+  const tileWidth = (usable - TILE_GAP * (cols - 1)) / cols;
 
-  // Tile height stretches when there's vertical room left after chrome,
-  // but never shrinks below the tile width. Caps at 1.2× width so a
-  // narrow phone with few lessons doesn't stretch tiles into rectangles.
-  const rows = Math.ceil(filtered.length / cols);
+  // Tile height stretches when there's vertical room left after chrome.
+  const numRows = Math.ceil(filtered.length / cols);
   const APPROX_CHROME = 240;
   const availableHeight = Math.max(0, height - APPROX_CHROME);
-  const naturalTileHeight = rows > 0 ? (availableHeight - TILE_GAP * (rows - 1)) / rows : tileWidth;
+  const naturalTileHeight =
+    numRows > 0 ? (availableHeight - TILE_GAP * (numRows - 1)) / numRows : tileWidth;
   const tileHeight = Math.max(
     tileWidth,
     Math.min(tileWidth * 1.2, naturalTileHeight),
   );
 
-  const gridData = useMemo<GridItem[]>(() => {
-    const remainder = filtered.length % cols;
-    if (remainder === 0) return filtered;
-    const fillerCount = cols - remainder;
-    return [
-      ...filtered,
-      ...Array.from(
-        { length: fillerCount },
-        (_, i): FillerItem => ({ __filler: true, id: `__filler-${i}` }),
-      ),
-    ];
+  // Group lessons into rows. Last row may have fewer than `cols` lessons,
+  // and each tile inside flex-distributes the row width equally — so a
+  // 23-lesson catalog in 3 cols ends with a 2-tile row whose tiles each
+  // take 50% of the row width. No empty trailing slot.
+  const rows = useMemo<Lesson[][]>(() => {
+    const out: Lesson[][] = [];
+    for (let i = 0; i < filtered.length; i += cols) {
+      out.push(filtered.slice(i, i + cols));
+    }
+    return out;
   }, [filtered, cols]);
 
   return (
     <ThemedView style={[styles.container, { backgroundColor: palette.bg }]}>
-      <FlatList<GridItem>
+      <FlatList<Lesson[]>
         key={`grid-${cols}`}
-        data={gridData}
-        keyExtractor={(item) => String(item.id)}
-        numColumns={cols}
+        data={rows}
+        keyExtractor={(_row, i) => `row-${i}`}
         contentContainerStyle={styles.listContent}
-        columnWrapperStyle={styles.columnWrapper}
         keyboardShouldPersistTaps="handled"
         ListHeaderComponent={
           <View style={styles.headerPad}>
-            <SearchBar
-              value={query}
-              onChange={setQuery}
-              palette={palette}
-            />
+            <SearchBar value={query} onChange={setQuery} palette={palette} />
             {lastLessonId !== null && !query ? (
               <Pressable
                 onPress={() =>
@@ -133,20 +121,19 @@ export default function LessonsScreen() {
             No results
           </ThemedText>
         }
-        renderItem={({ item }) => {
-          if (isFiller(item)) {
-            return <View style={{ width: tileWidth, height: tileHeight }} />;
-          }
-          return (
-            <LessonTile
-              lesson={item}
-              completedMap={completed}
-              width={tileWidth}
-              height={tileHeight}
-              palette={palette}
-            />
-          );
-        }}
+        renderItem={({ item: row }) => (
+          <View style={styles.row}>
+            {row.map((lesson) => (
+              <LessonTile
+                key={lesson.id}
+                lesson={lesson}
+                completedMap={completed}
+                height={tileHeight}
+                palette={palette}
+              />
+            ))}
+          </View>
+        )}
       />
     </ThemedView>
   );
@@ -191,13 +178,11 @@ function SearchBar({
 function LessonTile({
   lesson,
   completedMap,
-  width,
   height,
   palette,
 }: {
   lesson: Lesson;
   completedMap: Record<string, true>;
-  width: number;
   height: number;
   palette: SemanticPalette;
 }) {
@@ -213,17 +198,21 @@ function LessonTile({
     ? Palette.greenSoft
     : inProgress
     ? Palette.brandTint
-    : palette.fillTertiary;
+    : palette.fillQuaternary;
   const numeralColor = isComplete
     ? Palette.green
     : inProgress
     ? Palette.brand
     : palette.text;
+  const borderColor = isComplete
+    ? Palette.green
+    : inProgress
+    ? Palette.brand
+    : palette.separator;
 
-  // Numeral fontSize derives from the tile so the digit always dominates
-  // — ~58% of the smaller dimension, which keeps two-digit numbers safely
-  // inside on narrower tiles.
-  const numeralSize = Math.floor(Math.min(width, height) * 0.58);
+  // Numeral fontSize derives from the tile height so the digit always
+  // dominates and two-digit numbers (١٠–٢٣) stay safely inside.
+  const numeralSize = Math.floor(height * 0.6);
 
   return (
     <Link
@@ -232,7 +221,11 @@ function LessonTile({
       <Pressable
         style={({ pressed }) => [
           styles.tile,
-          { width, height, backgroundColor: bg },
+          {
+            height,
+            backgroundColor: bg,
+            borderColor,
+          },
           pressed && { opacity: 0.55 },
         ]}>
         <ThemedText
@@ -249,7 +242,7 @@ function LessonTile({
           <View
             style={[
               styles.tileBar,
-              { backgroundColor: 'rgba(120,120,128,0.20)' },
+              { backgroundColor: 'rgba(120,120,128,0.18)' },
             ]}>
             <View
               style={[
@@ -274,9 +267,11 @@ function LessonTile({
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  listContent: { paddingBottom: Space[6] },
-  headerPad: {
+  listContent: {
     paddingHorizontal: Space[3],
+    paddingBottom: Space[6],
+  },
+  headerPad: {
     paddingTop: Space[2],
     paddingBottom: Space[3],
     gap: Space[2],
@@ -300,13 +295,17 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   empty: { textAlign: 'center', paddingVertical: Space[8] },
-  columnWrapper: {
-    paddingHorizontal: Space[3],
+  // Each row distributes its tiles via flex: 1 so partial last rows
+  // (e.g. 2 tiles in a 3-col layout) still fill the full row width.
+  row: {
+    flexDirection: 'row',
     gap: TILE_GAP,
     marginBottom: TILE_GAP,
   },
   tile: {
+    flex: 1,
     borderRadius: Radius.lg,
+    borderWidth: StyleSheet.hairlineWidth,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
