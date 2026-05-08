@@ -1,0 +1,51 @@
+export type SectionType =
+  | 'topic'
+  | 'question'
+  | 'exercise'
+  | 'vocab'
+  | 'grammar';
+
+export type VocabItem = {
+  arabic: string;
+  translit?: string;
+  meaning?: string;
+  example?: string;
+};
+
+export type Section = {
+  type: SectionType;
+  content: string;
+  order: number;
+  translit?: string;
+  meaning?: string;
+  notes?: string;
+  vocab?: VocabItem[];
+};
+
+export type Lesson = {
+  id: number;
+  title: string;
+  titleEn?: string;
+  sections: Section[];
+};
+
+export type Book = {
+  book: string;
+  lessons: Lesson[];
+};
+
+export const SECTION_LABELS_AR: Record<SectionType, string> = {
+  topic: 'موضوع',
+  question: 'سؤال',
+  exercise: 'تمرين',
+  vocab: 'مفردات',
+  grammar: 'قواعد',
+};
+
+export const SECTION_LABELS_EN: Record<SectionType, string> = {
+  topic: 'Topic',
+  question: 'Question',
+  exercise: 'Exercise',
+  vocab: 'Vocabulary',
+  grammar: 'Grammar',
+};
