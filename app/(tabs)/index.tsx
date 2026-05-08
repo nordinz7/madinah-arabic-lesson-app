@@ -6,27 +6,38 @@ import {
   Pressable,
   StyleSheet,
   TextInput,
+  useWindowDimensions,
   View,
 } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Brand } from '@/constants/theme';
-import { toArabicNumber } from '@/src/arabic';
+import {
+  maybeStripTashkeel,
+  stripLessonPrefix,
+  toArabicNumber,
+} from '@/src/arabic';
 import { LESSONS } from '@/src/data';
 import { useEffectiveColorScheme } from '@/src/hooks/use-effective-color-scheme';
 import { lessonCompletion, useProgress } from '@/src/stores/progress';
+import { useSettings } from '@/src/stores/settings';
 import type { Lesson } from '@/src/types';
 
-const COLS = 4;
+const MIN_TILE = 84; // px; columns derived from screen width
 
 export default function LessonsScreen() {
   const router = useRouter();
+  const { width } = useWindowDimensions();
+  const cols = Math.max(3, Math.floor(width / MIN_TILE));
+  const tileSize = width / cols;
+
   const [query, setQuery] = useState('');
   const colorScheme = useEffectiveColorScheme();
 
   const completed = useProgress((s) => s.completedSections);
   const lastLessonId = useProgress((s) => s.lastLessonId);
+  const showTashkeel = useSettings((s) => s.showTashkeel);
 
   const filtered = useMemo(() => {
     const q = query.trim();
@@ -46,11 +57,12 @@ export default function LessonsScreen() {
   return (
     <ThemedView style={styles.container}>
       <FlatList
+        // Force remount when column count changes (e.g. rotation).
+        key={`grid-${cols}`}
         data={filtered}
         keyExtractor={(l) => String(l.id)}
-        numColumns={COLS}
-        contentContainerStyle={styles.list}
-        columnWrapperStyle={styles.column}
+        numColumns={cols}
+        contentContainerStyle={styles.listContent}
         keyboardShouldPersistTaps="handled"
         ListHeaderComponent={
           <View style={styles.header}>
@@ -95,7 +107,12 @@ export default function LessonsScreen() {
           <ThemedText style={styles.empty}>No results</ThemedText>
         }
         renderItem={({ item }) => (
-          <LessonTile lesson={item} completedMap={completed} />
+          <LessonTile
+            lesson={item}
+            completedMap={completed}
+            showTashkeel={showTashkeel}
+            size={tileSize}
+          />
         )}
       />
     </ThemedView>
@@ -105,9 +122,13 @@ export default function LessonsScreen() {
 function LessonTile({
   lesson,
   completedMap,
+  showTashkeel,
+  size,
 }: {
   lesson: Lesson;
   completedMap: Record<string, true>;
+  showTashkeel: boolean;
+  size: number;
 }) {
   const { ratio } = lessonCompletion(
     lesson.id,
@@ -116,6 +137,7 @@ function LessonTile({
   );
   const isComplete = ratio === 1;
   const inProgress = ratio > 0 && ratio < 1;
+  const ordinal = stripLessonPrefix(lesson.title);
 
   return (
     <Link
@@ -124,12 +146,16 @@ function LessonTile({
       <Pressable
         style={({ pressed }) => [
           styles.tile,
+          { width: size, height: size },
           inProgress && styles.tileInProgress,
           isComplete && styles.tileComplete,
           pressed && styles.tilePressed,
         ]}>
         <ThemedText style={styles.tileNumber}>
           {toArabicNumber(lesson.id)}
+        </ThemedText>
+        <ThemedText style={styles.tileOrdinal} numberOfLines={1}>
+          {maybeStripTashkeel(ordinal, showTashkeel)}
         </ThemedText>
         <View style={styles.progressTrack}>
           <View
@@ -145,13 +171,15 @@ function LessonTile({
   );
 }
 
-const TILE_GAP = 8;
-
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  list: { paddingHorizontal: 12, paddingTop: 8, paddingBottom: 24 },
-  column: { gap: TILE_GAP, marginBottom: TILE_GAP },
-  header: { gap: 8, marginBottom: 12 },
+  listContent: { paddingBottom: 24 },
+  header: {
+    gap: 8,
+    paddingHorizontal: 12,
+    paddingTop: 8,
+    paddingBottom: 12,
+  },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -171,38 +199,41 @@ const styles = StyleSheet.create({
   },
   resumeText: { fontSize: 13, color: Brand.accent, fontWeight: '600' },
   empty: { textAlign: 'center', padding: 32, opacity: 0.6 },
+  // Hairline border on every side; adjacent tiles share the visual edge,
+  // negative-margin trick stops the seam from appearing doubled.
   tile: {
-    flex: 1,
-    aspectRatio: 1,
-    borderRadius: 14,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: 'rgba(127,127,127,0.35)',
-    paddingHorizontal: 6,
-    paddingVertical: 10,
+    borderColor: 'rgba(127,127,127,0.3)',
+    marginRight: -StyleSheet.hairlineWidth,
+    marginBottom: -StyleSheet.hairlineWidth,
+    paddingHorizontal: 4,
+    paddingTop: 8,
+    paddingBottom: 6,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
+    gap: 4,
     overflow: 'hidden',
   },
   tilePressed: { opacity: 0.45 },
-  tileInProgress: {
-    borderColor: Brand.accent,
-  },
+  tileInProgress: { borderColor: Brand.accent },
   tileComplete: {
     borderColor: Brand.success,
     backgroundColor: Brand.successMuted,
   },
-  tileNumber: {
-    fontSize: 36,
-    lineHeight: 44,
-    opacity: 0.9,
+  tileNumber: { fontSize: 30, lineHeight: 36, opacity: 0.9 },
+  tileOrdinal: {
+    fontSize: 10,
+    lineHeight: 13,
+    opacity: 0.55,
+    maxWidth: '95%',
   },
   progressTrack: {
-    width: '70%',
+    width: '60%',
     height: 2,
     borderRadius: 1,
     backgroundColor: 'rgba(127,127,127,0.18)',
     overflow: 'hidden',
+    marginTop: 2,
   },
   progressFill: { height: '100%', backgroundColor: Brand.accent },
   progressFillComplete: { backgroundColor: Brand.success },
