@@ -3,14 +3,150 @@
 "lessons": [
 {
 "id": 1,
-"title": "الدرس الأول",
+"title": "الدَّرْسُ الأَوَّلُ",
+"titleEn": "Lesson 1",
 "sections": [
-{"type": "topic", "content": "هذا", "order": 1},
-{"type": "question", "content": "ما هذا؟", "order": 2},
-{"type": "exercise", "content": "تمرين 1", "order": 3},
-{"type": "exercise", "content": "تمرين 2", "order": 4},
-{"type": "exercise", "content": "تمرين 3", "order": 5},
-{"type": "question", "content": "مَنْ هذا؟", "order": 6}
+{
+  "type": "topic",
+  "content": "هذا",
+  "translit": "hādhā",
+  "meaning": "this (masculine, near)",
+  "order": 1,
+  "notes": "هذا is the demonstrative pronoun for a single masculine object that is near. Each noun below is shown with a tanwīn (final ـٌ /-un/), the indefinite case ending — i.e. \"a door\", \"a mosque\", etc.",
+  "vocab": [
+    { "arabic": "هذا بَابٌ", "translit": "hādhā bābun", "meaning": "this is a door" },
+    { "arabic": "هذا مَسْجِدٌ", "translit": "hādhā masjidun", "meaning": "this is a mosque" },
+    { "arabic": "هذا بَيْتٌ", "translit": "hādhā baytun", "meaning": "this is a house" },
+    { "arabic": "هذا مِفْتَاحٌ", "translit": "hādhā miftāḥun", "meaning": "this is a key" },
+    { "arabic": "هذا قَلَمٌ", "translit": "hādhā qalamun", "meaning": "this is a pen" },
+    { "arabic": "هذا كِتَابٌ", "translit": "hādhā kitābun", "meaning": "this is a book" },
+    { "arabic": "هذا كُرْسِيٌّ", "translit": "hādhā kursiyyun", "meaning": "this is a chair" },
+    { "arabic": "هذا سَرِيرٌ", "translit": "hādhā sarīrun", "meaning": "this is a bed" },
+    { "arabic": "هذا مَكْتَبٌ", "translit": "hādhā maktabun", "meaning": "this is a desk" }
+  ]
+},
+{
+  "type": "question",
+  "content": "ما هذا؟",
+  "translit": "mā hādhā?",
+  "meaning": "What is this?",
+  "order": 2,
+  "notes": "ما means \"what\" when asking about non-human things. أ at the start of a sentence (أهذا...؟) turns it into a yes/no question (\"is this...?\"). Answers use نَعَمْ (yes) or لا (no).",
+  "examples": [
+    { "prompt": "ما هذا؟", "answer": "هذا بَيْتٌ.", "meaning": "What is this? — This is a house." },
+    { "prompt": "أهذا بَيْتٌ؟", "answer": "نَعَمْ، هذا بَيْتٌ.", "meaning": "Is this a house? — Yes, this is a house." },
+    { "prompt": "ما هذا؟", "answer": "هذا قَمِيصٌ.", "meaning": "What is this? — This is a shirt." },
+    { "prompt": "أهذا سَرِيرٌ؟", "answer": "لا، هذا كُرْسِيٌّ.", "meaning": "Is this a bed? — No, this is a chair." },
+    { "prompt": "أهذا مِفْتَاحٌ؟", "answer": "لا، هذا قَلَمٌ.", "meaning": "Is this a key? — No, this is a pen." },
+    { "prompt": "ما هذا؟", "answer": "هذا نَجْمٌ.", "meaning": "What is this? — This is a star." }
+  ],
+  "vocab": [
+    { "arabic": "قَمِيصٌ", "translit": "qamīṣun", "meaning": "shirt" },
+    { "arabic": "نَجْمٌ", "translit": "najmun", "meaning": "star" }
+  ]
+},
+{
+  "type": "exercise",
+  "content": "تَمْرين (١)",
+  "translit": "tamrīn 1",
+  "meaning": "Exercise 1 — answer ما هذا؟ for each pictured object",
+  "order": 3,
+  "items": [
+    { "prompt": "ما هذا؟", "hint": "key", "answer": "هذا مِفْتَاحٌ." },
+    { "prompt": "ما هذا؟", "hint": "book", "answer": "هذا كِتَابٌ." },
+    { "prompt": "ما هذا؟", "hint": "pen", "answer": "هذا قَلَمٌ." },
+    { "prompt": "ما هذا؟", "hint": "door", "answer": "هذا بَابٌ." },
+    { "prompt": "ما هذا؟", "hint": "house", "answer": "هذا بَيْتٌ." },
+    { "prompt": "ما هذا؟", "hint": "chair", "answer": "هذا كُرْسِيٌّ." }
+  ]
+},
+{
+  "type": "exercise",
+  "content": "تَمْرين (٢)",
+  "translit": "tamrīn 2",
+  "meaning": "Exercise 2 — answer the yes/no questions truthfully based on each picture",
+  "order": 4,
+  "items": [
+    { "prompt": "أهذا بَيْتٌ؟", "hint": "mosque pictured", "answer": "لا، هذا مَسْجِدٌ." },
+    { "prompt": "أهذا مِفْتَاحٌ؟", "hint": "pen pictured", "answer": "لا، هذا قَلَمٌ." },
+    { "prompt": "أهذا قَمِيصٌ؟", "hint": "shirt pictured", "answer": "نَعَمْ، هذا قَمِيصٌ." },
+    { "prompt": "أهذا نَجْمٌ؟", "hint": "star pictured", "answer": "نَعَمْ، هذا نَجْمٌ." }
+  ]
+},
+{
+  "type": "exercise",
+  "content": "تَمْرين (٣) — اقْرَأْ واكْتُبْ",
+  "translit": "tamrīn 3 — iqra' wa-ktub",
+  "meaning": "Exercise 3 — Read and write",
+  "order": 5,
+  "items": [
+    { "prompt": "هذا مَكْتَبٌ.", "meaning": "This is a desk." },
+    { "prompt": "هذا مَسْجِدٌ.", "meaning": "This is a mosque." },
+    { "prompt": "هذا قَلَمٌ.", "meaning": "This is a pen." },
+    { "prompt": "هذا سَرِيرٌ.", "meaning": "This is a bed." },
+    { "prompt": "ما هذا؟ هذا كُرْسِيٌّ.", "meaning": "What is this? This is a chair." },
+    { "prompt": "أهذا بَيْتٌ؟ لا، هذا مَسْجِدٌ.", "meaning": "Is this a house? No, this is a mosque." },
+    { "prompt": "ما هذا؟ هذا مِفْتَاحٌ.", "meaning": "What is this? This is a key." }
+  ]
+},
+{
+  "type": "question",
+  "content": "مَنْ هذا؟",
+  "translit": "man hādhā?",
+  "meaning": "Who is this?",
+  "order": 6,
+  "notes": "مَنْ means \"who\" — used for people. Note: in classical Arabic, mostly animate beings (people and some animals) are referred to with مَنْ; objects use ما.",
+  "examples": [
+    { "prompt": "مَنْ هذا؟", "answer": "هذا طَبِيبٌ.", "meaning": "Who is this? — This is a doctor." },
+    { "prompt": "مَنْ هذا؟", "answer": "هذا وَلَدٌ.", "meaning": "Who is this? — This is a boy." },
+    { "prompt": "مَنْ هذا؟", "answer": "هذا طَالِبٌ.", "meaning": "Who is this? — This is a student." },
+    { "prompt": "أهذا وَلَدٌ؟", "answer": "لا، هذا رَجُلٌ.", "meaning": "Is this a boy? — No, this is a man." },
+    { "prompt": "مَنْ هذا؟", "answer": "هذا تَاجِرٌ.", "meaning": "Who is this? — This is a merchant." },
+    { "prompt": "أهذا كَلْبٌ؟", "answer": "لا، هذا قِطٌّ.", "meaning": "Is this a dog? — No, this is a cat." },
+    { "prompt": "أهذا حِمَارٌ؟", "answer": "لا، هذا حِصَانٌ.", "meaning": "Is this a donkey? — No, this is a horse." },
+    { "prompt": "وما هذا؟", "answer": "هذا جَمَلٌ.", "meaning": "And what is this? — This is a camel." },
+    { "prompt": "ما هذا؟", "answer": "هذا دِيكٌ.", "meaning": "What is this? — This is a rooster." },
+    { "prompt": "مَنْ هذا؟", "answer": "هذا مُدَرِّسٌ.", "meaning": "Who is this? — This is a teacher." },
+    { "prompt": "أهذا قَمِيصٌ؟", "answer": "لا، هذا مِنْدِيلٌ.", "meaning": "Is this a shirt? — No, this is a handkerchief." }
+  ],
+  "vocab": [
+    { "arabic": "طَبِيبٌ", "translit": "ṭabībun", "meaning": "doctor" },
+    { "arabic": "وَلَدٌ", "translit": "waladun", "meaning": "boy" },
+    { "arabic": "طَالِبٌ", "translit": "ṭālibun", "meaning": "student" },
+    { "arabic": "رَجُلٌ", "translit": "rajulun", "meaning": "man" },
+    { "arabic": "تَاجِرٌ", "translit": "tājirun", "meaning": "merchant" },
+    { "arabic": "كَلْبٌ", "translit": "kalbun", "meaning": "dog" },
+    { "arabic": "قِطٌّ", "translit": "qiṭṭun", "meaning": "cat" },
+    { "arabic": "حِمَارٌ", "translit": "ḥimārun", "meaning": "donkey" },
+    { "arabic": "حِصَانٌ", "translit": "ḥiṣānun", "meaning": "horse" },
+    { "arabic": "جَمَلٌ", "translit": "jamalun", "meaning": "camel" },
+    { "arabic": "دِيكٌ", "translit": "dīkun", "meaning": "rooster" },
+    { "arabic": "مُدَرِّسٌ", "translit": "mudarrisun", "meaning": "teacher" },
+    { "arabic": "مِنْدِيلٌ", "translit": "mindīlun", "meaning": "handkerchief" },
+    { "arabic": "مَنْ", "translit": "man", "meaning": "who?" },
+    { "arabic": "نَعَمْ", "translit": "na'am", "meaning": "yes" },
+    { "arabic": "لا", "translit": "lā", "meaning": "no" }
+  ]
+},
+{
+  "type": "exercise",
+  "content": "تَمْرين (٤) — اقْرَأْ واكْتُبْ",
+  "translit": "tamrīn 4 — iqra' wa-ktub",
+  "meaning": "Exercise 4 — Read and write the ten sentences",
+  "order": 7,
+  "items": [
+    { "prompt": "ما هذا؟ هذا قَلَمٌ.", "meaning": "What is this? This is a pen." },
+    { "prompt": "هذا كَلْبٌ.", "meaning": "This is a dog." },
+    { "prompt": "مَنْ هذا؟ هذا طَبِيبٌ.", "meaning": "Who is this? This is a doctor." },
+    { "prompt": "هذا جَمَلٌ.", "meaning": "This is a camel." },
+    { "prompt": "أهذا كَلْبٌ؟ لا، هذا قِطٌّ.", "meaning": "Is this a dog? No, this is a cat." },
+    { "prompt": "أهذا دِيكٌ؟ نَعَمْ.", "meaning": "Is this a rooster? Yes." },
+    { "prompt": "أهذا حِصَانٌ؟ لا، هذا حِمَارٌ.", "meaning": "Is this a horse? No, this is a donkey." },
+    { "prompt": "هذا مِنْدِيلٌ.", "meaning": "This is a handkerchief." },
+    { "prompt": "أهذا وَلَدٌ؟ نَعَمْ.", "meaning": "Is this a boy? Yes." },
+    { "prompt": "مَنْ هذا؟ هذا رَجُلٌ.", "meaning": "Who is this? This is a man." }
+  ]
+}
 ]
 },
 {

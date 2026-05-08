@@ -12,6 +12,14 @@ export type VocabItem = {
   example?: string;
 };
 
+export type ExerciseItem = {
+  prompt: string;
+  translit?: string;
+  meaning?: string;
+  answer?: string;
+  hint?: string;
+};
+
 export type Section = {
   type: SectionType;
   content: string;
@@ -20,6 +28,8 @@ export type Section = {
   meaning?: string;
   notes?: string;
   vocab?: VocabItem[];
+  examples?: ExerciseItem[];
+  items?: ExerciseItem[];
 };
 
 export type Lesson = {
