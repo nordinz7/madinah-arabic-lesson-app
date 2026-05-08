@@ -16,20 +16,11 @@ export default function TabsLayout() {
         headerTitleAlign: 'center',
       }}>
       <Tabs.Screen
-        name="index"
+        name="settings"
         options={{
-          title: 'الدروس',
+          title: 'الإعدادات',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="book-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="vocabulary"
-        options={{
-          title: 'المفردات',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="library-outline" size={size} color={color} />
+            <Ionicons name="settings-outline" size={size} color={color} />
           ),
         }}
       />
@@ -43,11 +34,20 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name="vocabulary"
         options={{
-          title: 'الإعدادات',
+          title: 'المفردات',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings-outline" size={size} color={color} />
+            <Ionicons name="library-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'الدروس',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="book-outline" size={size} color={color} />
           ),
         }}
       />

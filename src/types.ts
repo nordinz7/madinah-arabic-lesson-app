@@ -5,11 +5,16 @@ export type SectionType =
   | 'vocab'
   | 'grammar';
 
+export type Gender = 'm' | 'f';
+
 export type VocabItem = {
   arabic: string;
   translit?: string;
   meaning?: string;
   example?: string;
+  gender?: Gender;
+  plural?: string;
+  pluralTranslit?: string;
 };
 
 export type ExerciseItem = {

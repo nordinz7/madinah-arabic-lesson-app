@@ -149,11 +149,7 @@ function SectionCard({
       {section.meaning ? (
         <ThemedText style={styles.cardMeaning}>{section.meaning}</ThemedText>
       ) : null}
-      {section.notes ? (
-        <View style={styles.notesBlock}>
-          <ThemedText style={styles.notesText}>{section.notes}</ThemedText>
-        </View>
-      ) : null}
+      {section.notes ? <NotesBlock notes={section.notes} /> : null}
       {section.examples?.length ? (
         <ExamplesBlock
           examples={section.examples}
@@ -167,6 +163,34 @@ function SectionCard({
       {section.items?.length ? (
         <ItemsBlock items={section.items} fontScale={fontScale} arabic={arabic} />
       ) : null}
+    </View>
+  );
+}
+
+function NotesBlock({ notes }: { notes: string }) {
+  const lines = notes
+    .split(/\n+/)
+    .map((l) => l.trim())
+    .filter(Boolean);
+
+  if (lines.length <= 1) {
+    return (
+      <View style={styles.notesBlock}>
+        <ThemedText style={styles.notesText}>{notes}</ThemedText>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.notesBlock}>
+      {lines.map((line, i) => (
+        <View key={i} style={styles.bulletRow}>
+          <View style={styles.bulletDot} />
+          <ThemedText style={[styles.notesText, styles.bulletText]}>
+            {line}
+          </ThemedText>
+        </View>
+      ))}
     </View>
   );
 }
@@ -222,14 +246,50 @@ function VocabBlock({
       <ThemedText style={styles.subHeading}>المفردات · Vocabulary</ThemedText>
       <View style={styles.vocabGrid}>
         {vocab.map((v, i) => (
-          <View key={i} style={styles.vocabCard}>
-            <ThemedText style={styles.vocabArabic}>{arabic(v.arabic)}</ThemedText>
-            {v.translit ? (
-              <ThemedText style={styles.vocabTranslit}>{v.translit}</ThemedText>
-            ) : null}
-            {v.meaning ? (
-              <ThemedText style={styles.vocabMeaning}>{v.meaning}</ThemedText>
-            ) : null}
+          <View key={i} style={styles.vocabRow}>
+            <View style={styles.vocabMain}>
+              <View style={styles.vocabHeadline}>
+                <ThemedText style={styles.vocabArabic}>
+                  {arabic(v.arabic)}
+                </ThemedText>
+                {v.gender ? (
+                  <View
+                    style={[
+                      styles.genderChip,
+                      v.gender === 'f' ? styles.genderChipF : styles.genderChipM,
+                    ]}>
+                    <ThemedText
+                      style={[
+                        styles.genderChipText,
+                        v.gender === 'f'
+                          ? styles.genderChipTextF
+                          : styles.genderChipTextM,
+                      ]}>
+                      {v.gender === 'f' ? 'مؤنّث' : 'مذكّر'}
+                    </ThemedText>
+                  </View>
+                ) : null}
+              </View>
+              {v.translit ? (
+                <ThemedText style={styles.vocabTranslit}>{v.translit}</ThemedText>
+              ) : null}
+              {v.meaning ? (
+                <ThemedText style={styles.vocabMeaning}>{v.meaning}</ThemedText>
+              ) : null}
+              {v.plural ? (
+                <View style={styles.vocabPluralRow}>
+                  <ThemedText style={styles.vocabPluralLabel}>ج.</ThemedText>
+                  <ThemedText style={styles.vocabPluralAr}>
+                    {arabic(v.plural)}
+                  </ThemedText>
+                  {v.pluralTranslit ? (
+                    <ThemedText style={styles.vocabPluralTranslit}>
+                      {v.pluralTranslit}
+                    </ThemedText>
+                  ) : null}
+                </View>
+              ) : null}
+            </View>
           </View>
         ))}
       </View>
@@ -273,7 +333,7 @@ function ExerciseRow({
   fontScale: number;
   arabic: (s: string) => string;
 }) {
-  const [showAnswer, setShowAnswer] = useState(false);
+  const [revealed, setRevealed] = useState(false);
   const hasAnswer = Boolean(item.answer);
 
   return (
@@ -291,7 +351,12 @@ function ExerciseRow({
             {arabic(item.prompt)}
           </ThemedText>
           {item.hint ? (
-            <ThemedText style={styles.exerciseHint}>📷 {item.hint}</ThemedText>
+            <View style={styles.hintChip}>
+              <Ionicons name="image-outline" size={12} color="#6B7280" />
+              <ThemedText style={styles.hintChipText}>
+                {arabic(item.hint)}
+              </ThemedText>
+            </View>
           ) : null}
           {item.meaning ? (
             <ThemedText style={styles.exerciseMeaning}>{item.meaning}</ThemedText>
@@ -299,23 +364,29 @@ function ExerciseRow({
         </View>
       </View>
       {hasAnswer ? (
-        showAnswer ? (
-          <View style={styles.answerReveal}>
+        <Pressable
+          onPress={() => setRevealed((r) => !r)}
+          style={styles.answerWrap}
+          hitSlop={4}>
+          <View style={styles.answerInner}>
             <ThemedText
               style={[
                 styles.answerText,
                 { fontSize: 18 * fontScale, lineHeight: 28 * fontScale },
+                !revealed && styles.answerTextHidden,
               ]}>
               {arabic(item.answer!)}
             </ThemedText>
           </View>
-        ) : (
-          <Pressable
-            onPress={() => setShowAnswer(true)}
-            style={styles.showAnswerBtn}>
-            <ThemedText style={styles.showAnswerText}>إظهار الإجابة</ThemedText>
-          </Pressable>
-        )
+          {!revealed ? (
+            <View style={styles.answerOverlay}>
+              <Ionicons name="eye-outline" size={14} color="#0a7ea4" />
+              <ThemedText style={styles.answerOverlayText}>
+                اضغط للكشف عن الإجابة
+              </ThemedText>
+            </View>
+          ) : null}
+        </Pressable>
       ) : null}
     </View>
   );
@@ -374,8 +445,18 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 12,
     marginTop: 12,
+    gap: 6,
   },
   notesText: { fontSize: 13, lineHeight: 21, opacity: 0.85 },
+  bulletRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
+  bulletDot: {
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    backgroundColor: '#0a7ea4',
+    marginTop: 8,
+  },
+  bulletText: { flex: 1 },
   subBlock: { marginTop: 16 },
   subHeading: {
     fontSize: 12,
@@ -392,15 +473,46 @@ const styles = StyleSheet.create({
   examplePrompt: { },
   exampleAnswer: { opacity: 0.85, marginTop: 2 },
   exampleMeaning: { fontSize: 13, opacity: 0.6, marginTop: 4 },
-  vocabGrid: { gap: 8 },
-  vocabCard: {
+  vocabGrid: { gap: 6 },
+  vocabRow: {
     backgroundColor: 'rgba(127,127,127,0.07)',
-    padding: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     borderRadius: 10,
   },
-  vocabArabic: { fontSize: 20, lineHeight: 30 },
-  vocabTranslit: { fontSize: 13, opacity: 0.6, marginTop: 2, fontStyle: 'italic' },
-  vocabMeaning: { fontSize: 14, marginTop: 2 },
+  vocabMain: { gap: 2 },
+  vocabHeadline: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  vocabArabic: { fontSize: 20, lineHeight: 30, flexShrink: 1 },
+  vocabTranslit: { fontSize: 13, opacity: 0.55, fontStyle: 'italic' },
+  vocabMeaning: { fontSize: 14, opacity: 0.9 },
+  vocabPluralRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 4,
+  },
+  vocabPluralLabel: {
+    fontSize: 11,
+    opacity: 0.5,
+    fontWeight: '600',
+  },
+  vocabPluralAr: { fontSize: 15, lineHeight: 22 },
+  vocabPluralTranslit: { fontSize: 12, opacity: 0.55, fontStyle: 'italic' },
+  genderChip: {
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 999,
+  },
+  genderChipM: { backgroundColor: 'rgba(10,126,164,0.12)' },
+  genderChipF: { backgroundColor: 'rgba(244,114,182,0.16)' },
+  genderChipText: { fontSize: 10, fontWeight: '700' },
+  genderChipTextM: { color: '#0a7ea4' },
+  genderChipTextF: { color: '#BE185D' },
   exerciseRow: {
     paddingVertical: 8,
     borderBottomWidth: 1,
@@ -419,23 +531,46 @@ const styles = StyleSheet.create({
   exerciseIndexText: { fontSize: 12, fontWeight: '600', color: '#0a7ea4' },
   exerciseBody: { flex: 1 },
   exercisePrompt: { },
-  exerciseHint: { fontSize: 12, opacity: 0.55, marginTop: 4 },
   exerciseMeaning: { fontSize: 13, opacity: 0.6, marginTop: 4 },
-  showAnswerBtn: {
+  hintChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     alignSelf: 'flex-start',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: 'rgba(10,126,164,0.12)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    backgroundColor: 'rgba(127,127,127,0.12)',
     borderRadius: 999,
-    marginTop: 8,
+    marginTop: 6,
   },
-  showAnswerText: { fontSize: 13, color: '#0a7ea4', fontWeight: '600' },
-  answerReveal: {
+  hintChipText: { fontSize: 12, color: '#6B7280' },
+  answerWrap: {
     marginTop: 8,
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  answerInner: {
     paddingHorizontal: 12,
     paddingVertical: 8,
     backgroundColor: 'rgba(22,163,74,0.10)',
     borderRadius: 10,
+    minHeight: 40,
+    justifyContent: 'center',
   },
   answerText: { color: '#15803D' },
+  answerTextHidden: { opacity: 0 },
+  answerOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(127,127,127,0.18)',
+    borderRadius: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  answerOverlayText: { fontSize: 12, color: '#0a7ea4', fontWeight: '600' },
 });

@@ -12,17 +12,28 @@
   "translit": "hādhā",
   "meaning": "this (masculine, near)",
   "order": 1,
-  "notes": "هذا is the demonstrative pronoun for a single masculine object that is near. Each noun below is shown with a tanwīn (final ـٌ /-un/), the indefinite case ending — i.e. \"a door\", \"a mosque\", etc.",
+  "notes": "هذا is the demonstrative pronoun for a single masculine object that is near.\nNouns appear with tanwīn (final ـٌ /-un/), the indefinite case ending — \"a door\", \"a mosque\", etc.\nUse هذا for masculine nouns; the feminine form (هذه) is introduced in Lesson 6.",
+  "examples": [
+    { "prompt": "هذا بَابٌ.", "translit": "hādhā bābun", "meaning": "This is a door." },
+    { "prompt": "هذا مَسْجِدٌ.", "translit": "hādhā masjidun", "meaning": "This is a mosque." },
+    { "prompt": "هذا بَيْتٌ.", "translit": "hādhā baytun", "meaning": "This is a house." },
+    { "prompt": "هذا مِفْتَاحٌ.", "translit": "hādhā miftāḥun", "meaning": "This is a key." },
+    { "prompt": "هذا قَلَمٌ.", "translit": "hādhā qalamun", "meaning": "This is a pen." },
+    { "prompt": "هذا كِتَابٌ.", "translit": "hādhā kitābun", "meaning": "This is a book." },
+    { "prompt": "هذا كُرْسِيٌّ.", "translit": "hādhā kursiyyun", "meaning": "This is a chair." },
+    { "prompt": "هذا سَرِيرٌ.", "translit": "hādhā sarīrun", "meaning": "This is a bed." },
+    { "prompt": "هذا مَكْتَبٌ.", "translit": "hādhā maktabun", "meaning": "This is a desk." }
+  ],
   "vocab": [
-    { "arabic": "هذا بَابٌ", "translit": "hādhā bābun", "meaning": "this is a door" },
-    { "arabic": "هذا مَسْجِدٌ", "translit": "hādhā masjidun", "meaning": "this is a mosque" },
-    { "arabic": "هذا بَيْتٌ", "translit": "hādhā baytun", "meaning": "this is a house" },
-    { "arabic": "هذا مِفْتَاحٌ", "translit": "hādhā miftāḥun", "meaning": "this is a key" },
-    { "arabic": "هذا قَلَمٌ", "translit": "hādhā qalamun", "meaning": "this is a pen" },
-    { "arabic": "هذا كِتَابٌ", "translit": "hādhā kitābun", "meaning": "this is a book" },
-    { "arabic": "هذا كُرْسِيٌّ", "translit": "hādhā kursiyyun", "meaning": "this is a chair" },
-    { "arabic": "هذا سَرِيرٌ", "translit": "hādhā sarīrun", "meaning": "this is a bed" },
-    { "arabic": "هذا مَكْتَبٌ", "translit": "hādhā maktabun", "meaning": "this is a desk" }
+    { "arabic": "بَابٌ", "translit": "bābun", "meaning": "door", "gender": "m", "plural": "أَبْوَاب", "pluralTranslit": "abwāb" },
+    { "arabic": "مَسْجِدٌ", "translit": "masjidun", "meaning": "mosque", "gender": "m", "plural": "مَسَاجِد", "pluralTranslit": "masājid" },
+    { "arabic": "بَيْتٌ", "translit": "baytun", "meaning": "house", "gender": "m", "plural": "بُيُوت", "pluralTranslit": "buyūt" },
+    { "arabic": "مِفْتَاحٌ", "translit": "miftāḥun", "meaning": "key", "gender": "m", "plural": "مَفَاتيح", "pluralTranslit": "mafātīḥ" },
+    { "arabic": "قَلَمٌ", "translit": "qalamun", "meaning": "pen", "gender": "m", "plural": "أَقْلام", "pluralTranslit": "aqlām" },
+    { "arabic": "كِتَابٌ", "translit": "kitābun", "meaning": "book", "gender": "m", "plural": "كُتُب", "pluralTranslit": "kutub" },
+    { "arabic": "كُرْسِيٌّ", "translit": "kursiyyun", "meaning": "chair", "gender": "m", "plural": "كَرَاسِيّ", "pluralTranslit": "karāsī" },
+    { "arabic": "سَرِيرٌ", "translit": "sarīrun", "meaning": "bed", "gender": "m", "plural": "أَسِرَّة", "pluralTranslit": "asirra" },
+    { "arabic": "مَكْتَبٌ", "translit": "maktabun", "meaning": "desk", "gender": "m", "plural": "مَكَاتِب", "pluralTranslit": "makātib" }
   ]
 },
 {
@@ -31,7 +42,7 @@
   "translit": "mā hādhā?",
   "meaning": "What is this?",
   "order": 2,
-  "notes": "ما means \"what\" when asking about non-human things. أ at the start of a sentence (أهذا...؟) turns it into a yes/no question (\"is this...?\"). Answers use نَعَمْ (yes) or لا (no).",
+  "notes": "ما means \"what\" when asking about non-human things.\nThe prefix أ at the start of a sentence (أهذا...؟) turns it into a yes/no question (\"is this...?\").\nAnswers use نَعَمْ (yes) or لا (no).",
   "examples": [
     { "prompt": "ما هذا؟", "answer": "هذا بَيْتٌ.", "meaning": "What is this? — This is a house." },
     { "prompt": "أهذا بَيْتٌ؟", "answer": "نَعَمْ، هذا بَيْتٌ.", "meaning": "Is this a house? — Yes, this is a house." },
@@ -41,8 +52,8 @@
     { "prompt": "ما هذا؟", "answer": "هذا نَجْمٌ.", "meaning": "What is this? — This is a star." }
   ],
   "vocab": [
-    { "arabic": "قَمِيصٌ", "translit": "qamīṣun", "meaning": "shirt" },
-    { "arabic": "نَجْمٌ", "translit": "najmun", "meaning": "star" }
+    { "arabic": "قَمِيصٌ", "translit": "qamīṣun", "meaning": "shirt", "gender": "m", "plural": "قُمْصَان", "pluralTranslit": "qumṣān" },
+    { "arabic": "نَجْمٌ", "translit": "najmun", "meaning": "star", "gender": "m", "plural": "نُجُوم", "pluralTranslit": "nujūm" }
   ]
 },
 {
@@ -52,12 +63,12 @@
   "meaning": "Exercise 1 — answer ما هذا؟ for each pictured object",
   "order": 3,
   "items": [
-    { "prompt": "ما هذا؟", "hint": "key", "answer": "هذا مِفْتَاحٌ." },
-    { "prompt": "ما هذا؟", "hint": "book", "answer": "هذا كِتَابٌ." },
-    { "prompt": "ما هذا؟", "hint": "pen", "answer": "هذا قَلَمٌ." },
-    { "prompt": "ما هذا؟", "hint": "door", "answer": "هذا بَابٌ." },
-    { "prompt": "ما هذا؟", "hint": "house", "answer": "هذا بَيْتٌ." },
-    { "prompt": "ما هذا؟", "hint": "chair", "answer": "هذا كُرْسِيٌّ." }
+    { "prompt": "ما هذا؟", "hint": "مفتاح", "answer": "هذا مِفْتَاحٌ." },
+    { "prompt": "ما هذا؟", "hint": "كتاب", "answer": "هذا كِتَابٌ." },
+    { "prompt": "ما هذا؟", "hint": "قلم", "answer": "هذا قَلَمٌ." },
+    { "prompt": "ما هذا؟", "hint": "باب", "answer": "هذا بَابٌ." },
+    { "prompt": "ما هذا؟", "hint": "بيت", "answer": "هذا بَيْتٌ." },
+    { "prompt": "ما هذا؟", "hint": "كرسي", "answer": "هذا كُرْسِيٌّ." }
   ]
 },
 {
@@ -67,10 +78,10 @@
   "meaning": "Exercise 2 — answer the yes/no questions truthfully based on each picture",
   "order": 4,
   "items": [
-    { "prompt": "أهذا بَيْتٌ؟", "hint": "mosque pictured", "answer": "لا، هذا مَسْجِدٌ." },
-    { "prompt": "أهذا مِفْتَاحٌ؟", "hint": "pen pictured", "answer": "لا، هذا قَلَمٌ." },
-    { "prompt": "أهذا قَمِيصٌ؟", "hint": "shirt pictured", "answer": "نَعَمْ، هذا قَمِيصٌ." },
-    { "prompt": "أهذا نَجْمٌ؟", "hint": "star pictured", "answer": "نَعَمْ، هذا نَجْمٌ." }
+    { "prompt": "أهذا بَيْتٌ؟", "hint": "مسجد", "answer": "لا، هذا مَسْجِدٌ." },
+    { "prompt": "أهذا مِفْتَاحٌ؟", "hint": "قلم", "answer": "لا، هذا قَلَمٌ." },
+    { "prompt": "أهذا قَمِيصٌ؟", "hint": "قميص", "answer": "نَعَمْ، هذا قَمِيصٌ." },
+    { "prompt": "أهذا نَجْمٌ؟", "hint": "نجم", "answer": "نَعَمْ، هذا نَجْمٌ." }
   ]
 },
 {
@@ -95,7 +106,7 @@
   "translit": "man hādhā?",
   "meaning": "Who is this?",
   "order": 6,
-  "notes": "مَنْ means \"who\" — used for people. Note: in classical Arabic, mostly animate beings (people and some animals) are referred to with مَنْ; objects use ما.",
+  "notes": "مَنْ means \"who\" — used for people.\nIn classical Arabic, mostly animate beings (people and some animals) are referred to with مَنْ; objects use ما.\nIn this section the same demonstrative هذا applies to people just as it did to objects.",
   "examples": [
     { "prompt": "مَنْ هذا؟", "answer": "هذا طَبِيبٌ.", "meaning": "Who is this? — This is a doctor." },
     { "prompt": "مَنْ هذا؟", "answer": "هذا وَلَدٌ.", "meaning": "Who is this? — This is a boy." },
@@ -110,19 +121,19 @@
     { "prompt": "أهذا قَمِيصٌ؟", "answer": "لا، هذا مِنْدِيلٌ.", "meaning": "Is this a shirt? — No, this is a handkerchief." }
   ],
   "vocab": [
-    { "arabic": "طَبِيبٌ", "translit": "ṭabībun", "meaning": "doctor" },
-    { "arabic": "وَلَدٌ", "translit": "waladun", "meaning": "boy" },
-    { "arabic": "طَالِبٌ", "translit": "ṭālibun", "meaning": "student" },
-    { "arabic": "رَجُلٌ", "translit": "rajulun", "meaning": "man" },
-    { "arabic": "تَاجِرٌ", "translit": "tājirun", "meaning": "merchant" },
-    { "arabic": "كَلْبٌ", "translit": "kalbun", "meaning": "dog" },
-    { "arabic": "قِطٌّ", "translit": "qiṭṭun", "meaning": "cat" },
-    { "arabic": "حِمَارٌ", "translit": "ḥimārun", "meaning": "donkey" },
-    { "arabic": "حِصَانٌ", "translit": "ḥiṣānun", "meaning": "horse" },
-    { "arabic": "جَمَلٌ", "translit": "jamalun", "meaning": "camel" },
-    { "arabic": "دِيكٌ", "translit": "dīkun", "meaning": "rooster" },
-    { "arabic": "مُدَرِّسٌ", "translit": "mudarrisun", "meaning": "teacher" },
-    { "arabic": "مِنْدِيلٌ", "translit": "mindīlun", "meaning": "handkerchief" },
+    { "arabic": "طَبِيبٌ", "translit": "ṭabībun", "meaning": "doctor", "gender": "m", "plural": "أَطِبَّاء", "pluralTranslit": "aṭibbā'" },
+    { "arabic": "وَلَدٌ", "translit": "waladun", "meaning": "boy", "gender": "m", "plural": "أَوْلَاد", "pluralTranslit": "awlād" },
+    { "arabic": "طَالِبٌ", "translit": "ṭālibun", "meaning": "student", "gender": "m", "plural": "طُلَّاب", "pluralTranslit": "ṭullāb" },
+    { "arabic": "رَجُلٌ", "translit": "rajulun", "meaning": "man", "gender": "m", "plural": "رِجَال", "pluralTranslit": "rijāl" },
+    { "arabic": "تَاجِرٌ", "translit": "tājirun", "meaning": "merchant", "gender": "m", "plural": "تُجَّار", "pluralTranslit": "tujjār" },
+    { "arabic": "كَلْبٌ", "translit": "kalbun", "meaning": "dog", "gender": "m", "plural": "كِلَاب", "pluralTranslit": "kilāb" },
+    { "arabic": "قِطٌّ", "translit": "qiṭṭun", "meaning": "cat", "gender": "m", "plural": "قِطَط", "pluralTranslit": "qiṭaṭ" },
+    { "arabic": "حِمَارٌ", "translit": "ḥimārun", "meaning": "donkey", "gender": "m", "plural": "حَمِير", "pluralTranslit": "ḥamīr" },
+    { "arabic": "حِصَانٌ", "translit": "ḥiṣānun", "meaning": "horse", "gender": "m", "plural": "خُيُول", "pluralTranslit": "khuyūl" },
+    { "arabic": "جَمَلٌ", "translit": "jamalun", "meaning": "camel", "gender": "m", "plural": "جِمَال", "pluralTranslit": "jimāl" },
+    { "arabic": "دِيكٌ", "translit": "dīkun", "meaning": "rooster", "gender": "m", "plural": "دُيُوك", "pluralTranslit": "duyūk" },
+    { "arabic": "مُدَرِّسٌ", "translit": "mudarrisun", "meaning": "teacher", "gender": "m", "plural": "مُدَرِّسُون", "pluralTranslit": "mudarrisūn" },
+    { "arabic": "مِنْدِيلٌ", "translit": "mindīlun", "meaning": "handkerchief", "gender": "m", "plural": "مَنَادِيل", "pluralTranslit": "manādīl" },
     { "arabic": "مَنْ", "translit": "man", "meaning": "who?" },
     { "arabic": "نَعَمْ", "translit": "na'am", "meaning": "yes" },
     { "arabic": "لا", "translit": "lā", "meaning": "no" }
