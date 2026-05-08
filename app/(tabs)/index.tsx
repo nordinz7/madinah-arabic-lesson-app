@@ -12,18 +12,13 @@ import {
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Brand } from '@/constants/theme';
-import {
-  maybeStripTashkeel,
-  stripLessonPrefix,
-  toArabicNumber,
-} from '@/src/arabic';
+import { toArabicNumber } from '@/src/arabic';
 import { LESSONS } from '@/src/data';
 import { useEffectiveColorScheme } from '@/src/hooks/use-effective-color-scheme';
 import { lessonCompletion, useProgress } from '@/src/stores/progress';
-import { useSettings } from '@/src/stores/settings';
 import type { Lesson } from '@/src/types';
 
-const COLS = 3;
+const COLS = 4;
 
 export default function LessonsScreen() {
   const router = useRouter();
@@ -32,7 +27,6 @@ export default function LessonsScreen() {
 
   const completed = useProgress((s) => s.completedSections);
   const lastLessonId = useProgress((s) => s.lastLessonId);
-  const showTashkeel = useSettings((s) => s.showTashkeel);
 
   const filtered = useMemo(() => {
     const q = query.trim();
@@ -101,11 +95,7 @@ export default function LessonsScreen() {
           <ThemedText style={styles.empty}>No results</ThemedText>
         }
         renderItem={({ item }) => (
-          <LessonTile
-            lesson={item}
-            completedMap={completed}
-            showTashkeel={showTashkeel}
-          />
+          <LessonTile lesson={item} completedMap={completed} />
         )}
       />
     </ThemedView>
@@ -115,11 +105,9 @@ export default function LessonsScreen() {
 function LessonTile({
   lesson,
   completedMap,
-  showTashkeel,
 }: {
   lesson: Lesson;
   completedMap: Record<string, true>;
-  showTashkeel: boolean;
 }) {
   const { ratio } = lessonCompletion(
     lesson.id,
@@ -128,7 +116,6 @@ function LessonTile({
   );
   const isComplete = ratio === 1;
   const inProgress = ratio > 0 && ratio < 1;
-  const ordinal = stripLessonPrefix(lesson.title);
 
   return (
     <Link
@@ -141,16 +128,8 @@ function LessonTile({
           isComplete && styles.tileComplete,
           pressed && styles.tilePressed,
         ]}>
-        {isComplete ? (
-          <View style={styles.completeBadge}>
-            <Ionicons name="checkmark" size={11} color="white" />
-          </View>
-        ) : null}
         <ThemedText style={styles.tileNumber}>
           {toArabicNumber(lesson.id)}
-        </ThemedText>
-        <ThemedText style={styles.tileOrdinal} numberOfLines={2}>
-          {maybeStripTashkeel(ordinal, showTashkeel)}
         </ThemedText>
         <View style={styles.progressTrack}>
           <View
@@ -195,50 +174,36 @@ const styles = StyleSheet.create({
   tile: {
     flex: 1,
     aspectRatio: 1,
-    backgroundColor: 'rgba(127,127,127,0.08)',
-    borderRadius: 12,
-    paddingHorizontal: 8,
+    borderRadius: 14,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(127,127,127,0.35)',
+    paddingHorizontal: 6,
     paddingVertical: 10,
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    gap: 8,
     overflow: 'hidden',
   },
-  tilePressed: { opacity: 0.55 },
+  tilePressed: { opacity: 0.45 },
   tileInProgress: {
-    backgroundColor: Brand.accentMuted,
+    borderColor: Brand.accent,
   },
   tileComplete: {
+    borderColor: Brand.success,
     backgroundColor: Brand.successMuted,
   },
   tileNumber: {
-    fontSize: 30,
-    lineHeight: 38,
-    opacity: 0.85,
-  },
-  tileOrdinal: {
-    fontSize: 16,
-    lineHeight: 22,
-    textAlign: 'center',
-    flexShrink: 1,
+    fontSize: 36,
+    lineHeight: 44,
+    opacity: 0.9,
   },
   progressTrack: {
-    width: '100%',
-    height: 3,
-    borderRadius: 1.5,
+    width: '70%',
+    height: 2,
+    borderRadius: 1,
     backgroundColor: 'rgba(127,127,127,0.18)',
     overflow: 'hidden',
   },
   progressFill: { height: '100%', backgroundColor: Brand.accent },
   progressFillComplete: { backgroundColor: Brand.success },
-  completeBadge: {
-    position: 'absolute',
-    top: 6,
-    left: 6,
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    backgroundColor: Brand.success,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
 });
