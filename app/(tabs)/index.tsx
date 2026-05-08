@@ -25,20 +25,47 @@ import {
 } from '@/src/design';
 import { lessonCompletion, useProgress } from '@/src/stores/progress';
 import { useSettings } from '@/src/stores/settings';
-import type { Lesson } from '@/src/types';
+import type { Lesson, Section } from '@/src/types';
 
-const MIN_TILE = 78;
-const TILE_GAP = 4;
+const MIN_TILE = 150;
+const TILE_GAP = 6;
 
 type FillerItem = { __filler: true; id: string };
 type GridItem = Lesson | FillerItem;
 const isFiller = (item: GridItem): item is FillerItem => '__filler' in item;
 
+type Signature = { ar: string; meaning: string; section: Section | null };
+
+/**
+ * Each lesson's tile is identified by an "Arabic signature" — the topic
+ * concept the lesson teaches (هذا, ذلك, هذه, الممنوع من الصرف, …) rather
+ * than just its number. We pull this from the first topic > grammar >
+ * question section, trimming structural separators that distract from
+ * the headline word.
+ */
+function lessonSignature(lesson: Lesson): Signature {
+  const candidate =
+    lesson.sections.find((s) => s.type === 'topic') ??
+    lesson.sections.find((s) => s.type === 'grammar') ??
+    lesson.sections.find((s) => s.type === 'question') ??
+    lesson.sections[0] ??
+    null;
+  if (!candidate) return { ar: '', meaning: '', section: null };
+  // First chunk before transformation arrows / commas — keeps the
+  // headline word, drops the "→ derived form" half.
+  const ar = candidate.content.split(/\s*[>،]\s*/)[0].trim();
+  return {
+    ar,
+    meaning: candidate.meaning ?? candidate.translit ?? '',
+    section: candidate,
+  };
+}
+
 export default function LessonsScreen() {
   const router = useRouter();
   const { width } = useWindowDimensions();
-
   const [query, setQuery] = useState('');
+
   const colorScheme = useEffectiveColorScheme();
   const palette = Semantic[colorScheme];
   const showTashkeel = useSettings((s) => s.showTashkeel);
@@ -56,16 +83,12 @@ export default function LessonsScreen() {
     );
   }, [query]);
 
-  // Compute grid metrics. cols flexes with screen width; tile width comes
-  // from a usable area = screenWidth - outer padding - inter-tile gaps.
   const HORIZONTAL_PAD = Space[3];
   const usable = width - HORIZONTAL_PAD * 2;
   const cols = Math.max(2, Math.floor((usable + TILE_GAP) / (MIN_TILE + TILE_GAP)));
-  const tileSize = Math.floor(
-    (usable - TILE_GAP * (cols - 1)) / cols,
-  );
+  const tileWidth = Math.floor((usable - TILE_GAP * (cols - 1)) / cols);
+  const tileHeight = Math.round(tileWidth / 0.95); // a hair taller than wide
 
-  // Pad with invisible tiles so the last row stays square.
   const gridData = useMemo<GridItem[]>(() => {
     const remainder = filtered.length % cols;
     if (remainder === 0) return filtered;
@@ -79,14 +102,12 @@ export default function LessonsScreen() {
     ];
   }, [filtered, cols]);
 
-  // The "feature" card target — last visited if known, else Lesson 1.
-  const featureLessonId =
-    lastLessonId !== null && filtered.some((l) => l.id === lastLessonId)
-      ? lastLessonId
-      : filtered[0]?.id;
-  const featureLesson = featureLessonId
-    ? filtered.find((l) => l.id === featureLessonId)
-    : null;
+  // Choose the featured lesson: last visited if it's still in the
+  // filtered list, otherwise the first lesson.
+  const featureLesson =
+    (lastLessonId !== null && filtered.find((l) => l.id === lastLessonId)) ||
+    filtered[0] ||
+    null;
   const isFreshStart = lastLessonId === null;
 
   return (
@@ -108,12 +129,11 @@ export default function LessonsScreen() {
                 palette={palette}
               />
               {featureLesson && !query ? (
-                <ContinueCard
+                <FeatureCard
                   lesson={featureLesson}
                   fresh={isFreshStart}
                   showTashkeel={showTashkeel}
                   completedMap={completed}
-                  palette={palette}
                   onPress={() =>
                     router.push({
                       pathname: '/lesson/[id]',
@@ -127,7 +147,7 @@ export default function LessonsScreen() {
                 weight="semibold"
                 tone="tertiary"
                 style={styles.gridHeader}>
-                ALL LESSONS
+                {query ? 'RESULTS' : 'ALL LESSONS'}
               </ThemedText>
             </View>
           </View>
@@ -142,13 +162,15 @@ export default function LessonsScreen() {
         }
         renderItem={({ item }) => {
           if (isFiller(item)) {
-            return <View style={{ width: tileSize, height: tileSize }} />;
+            return <View style={{ width: tileWidth, height: tileHeight }} />;
           }
           return (
             <LessonTile
               lesson={item}
               completedMap={completed}
-              size={tileSize}
+              showTashkeel={showTashkeel}
+              width={tileWidth}
+              height={tileHeight}
               palette={palette}
             />
           );
@@ -194,19 +216,17 @@ function SearchBar({
   );
 }
 
-function ContinueCard({
+function FeatureCard({
   lesson,
   fresh,
   showTashkeel,
   completedMap,
-  palette,
   onPress,
 }: {
   lesson: Lesson;
   fresh: boolean;
   showTashkeel: boolean;
   completedMap: Record<string, true>;
-  palette: SemanticPalette;
   onPress: () => void;
 }) {
   const { done, total, ratio } = lessonCompletion(
@@ -215,60 +235,57 @@ function ContinueCard({
     completedMap,
   );
   const pct = Math.round(ratio * 100);
-  const kicker = fresh ? 'START HERE' : 'CONTINUE LEARNING';
-  const titleSection = lesson.sections.find((s) => s.type === 'topic');
+  const sig = lessonSignature(lesson);
+  const kicker = fresh ? 'START HERE' : 'CONTINUE';
 
   return (
     <Pressable
       onPress={onPress}
       style={({ pressed }) => [
-        styles.featureCard,
+        styles.feature,
         { backgroundColor: Palette.brandTint },
         pressed && { opacity: 0.85 },
       ]}>
       <View style={styles.featureHeader}>
-        <ThemedText
-          variant="caption2"
-          weight="semibold"
-          style={[styles.featureKicker, { color: Palette.brand }]}>
-          {kicker}
-        </ThemedText>
-        <Ionicons name="chevron-forward" size={18} color={Palette.brand} />
+        <View style={styles.featureKickerRow}>
+          <ThemedText
+            variant="caption2"
+            weight="semibold"
+            style={[styles.kickerText, { color: Palette.brand }]}>
+            {kicker}
+          </ThemedText>
+          <View style={[styles.numberBadge, { backgroundColor: Palette.brand }]}>
+            <ThemedText
+              script="arabic"
+              weight="bold"
+              style={styles.numberBadgeText}>
+              {toArabicNumber(lesson.id)}
+            </ThemedText>
+          </View>
+        </View>
+        <Ionicons name="play-circle" size={28} color={Palette.brand} />
       </View>
       <View style={styles.featureBody}>
         <ThemedText
           script="arabic"
           weight="bold"
-          style={[styles.featureNumeral, { color: Palette.brand }]}>
-          {toArabicNumber(lesson.id)}
+          adjustsFontSizeToFit
+          numberOfLines={2}
+          style={[styles.featureSignature, { color: Palette.brand }]}>
+          {maybeStripTashkeel(sig.ar, showTashkeel)}
         </ThemedText>
-        <View style={styles.featureMain}>
+        {sig.meaning ? (
           <ThemedText
-            script="arabic"
-            weight="bold"
-            variant="title2"
-            numberOfLines={1}>
-            {maybeStripTashkeel(lesson.title, showTashkeel)}
+            variant="callout"
+            tone="secondary"
+            numberOfLines={1}
+            style={styles.featureMeaning}>
+            {sig.meaning}
           </ThemedText>
-          {titleSection ? (
-            <ThemedText
-              variant="footnote"
-              tone="secondary"
-              numberOfLines={1}
-              style={styles.featureSub}>
-              {titleSection.translit
-                ? `${titleSection.translit} · ${titleSection.meaning ?? ''}`
-                : titleSection.meaning ?? ''}
-            </ThemedText>
-          ) : null}
-        </View>
+        ) : null}
       </View>
-      <View style={styles.featureProgress}>
-        <View
-          style={[
-            styles.featureTrack,
-            { backgroundColor: 'rgba(120,120,128,0.20)' },
-          ]}>
+      <View style={styles.featureFooter}>
+        <View style={styles.featureTrack}>
           <View
             style={[
               styles.featureFill,
@@ -279,8 +296,8 @@ function ContinueCard({
         <ThemedText
           variant="caption1"
           weight="semibold"
-          style={{ color: Palette.brand, minWidth: 60, textAlign: 'right' }}>
-          {fresh ? 'Begin' : `${done}/${total} · ${pct}%`}
+          style={{ color: Palette.brand, minWidth: 70, textAlign: 'right' }}>
+          {fresh ? 'Begin →' : `${done}/${total} · ${pct}%`}
         </ThemedText>
       </View>
     </Pressable>
@@ -290,12 +307,16 @@ function ContinueCard({
 function LessonTile({
   lesson,
   completedMap,
-  size,
+  showTashkeel,
+  width,
+  height,
   palette,
 }: {
   lesson: Lesson;
   completedMap: Record<string, true>;
-  size: number;
+  showTashkeel: boolean;
+  width: number;
+  height: number;
   palette: SemanticPalette;
 }) {
   const { ratio } = lessonCompletion(
@@ -305,18 +326,24 @@ function LessonTile({
   );
   const isComplete = ratio === 1;
   const inProgress = ratio > 0 && ratio < 1;
-  const numeralSize = Math.floor(size * 0.5);
+  const sig = lessonSignature(lesson);
 
   const bg = isComplete
     ? Palette.greenSoft
     : inProgress
     ? Palette.brandTint
     : palette.fillTertiary;
-  const numeralColor = isComplete
+  const accentColor = isComplete
     ? Palette.green
     : inProgress
     ? Palette.brand
     : palette.text;
+  const numberBadgeBg = isComplete
+    ? Palette.green
+    : inProgress
+    ? Palette.brand
+    : palette.fill;
+  const numberBadgeText = isComplete || inProgress ? 'white' : palette.text;
 
   return (
     <Link
@@ -325,38 +352,61 @@ function LessonTile({
       <Pressable
         style={({ pressed }) => [
           styles.tile,
-          {
-            width: size,
-            height: size,
-            backgroundColor: bg,
-          },
+          { width, height, backgroundColor: bg },
           pressed && { opacity: 0.55 },
         ]}>
-        <ThemedText
-          script="arabic"
-          weight="bold"
-          style={{
-            fontSize: numeralSize,
-            lineHeight: numeralSize * 1.05,
-            color: numeralColor,
-          }}>
-          {toArabicNumber(lesson.id)}
-        </ThemedText>
-        {inProgress ? (
-          <View style={[styles.tileBar, { backgroundColor: 'rgba(120,120,128,0.20)' }]}>
+        <View style={[styles.numberBadge, { backgroundColor: numberBadgeBg }]}>
+          <ThemedText
+            script="arabic"
+            weight="bold"
+            style={[
+              styles.numberBadgeText,
+              { color: numberBadgeText },
+            ]}>
+            {toArabicNumber(lesson.id)}
+          </ThemedText>
+        </View>
+        <View style={styles.tileBody}>
+          <ThemedText
+            script="arabic"
+            weight="bold"
+            adjustsFontSizeToFit
+            numberOfLines={2}
+            style={[
+              styles.tileSignature,
+              { color: accentColor, fontSize: width * 0.24 },
+            ]}>
+            {maybeStripTashkeel(sig.ar, showTashkeel)}
+          </ThemedText>
+          {sig.meaning ? (
+            <ThemedText
+              variant="caption1"
+              tone="secondary"
+              numberOfLines={1}
+              style={styles.tileMeaning}>
+              {sig.meaning}
+            </ThemedText>
+          ) : null}
+        </View>
+        {(inProgress || isComplete) && (
+          <View
+            style={[
+              styles.tileBar,
+              { backgroundColor: 'rgba(120,120,128,0.20)' },
+            ]}>
             <View
               style={[
                 styles.tileBarFill,
                 {
                   width: `${Math.round(ratio * 100)}%`,
-                  backgroundColor: Palette.brand,
+                  backgroundColor: accentColor,
                 },
               ]}
             />
           </View>
-        ) : null}
+        )}
         {isComplete ? (
-          <View style={styles.tileCheck}>
+          <View style={[styles.completeBadge, { backgroundColor: Palette.green }]}>
             <Ionicons name="checkmark" size={11} color="white" />
           </View>
         ) : null}
@@ -384,8 +434,8 @@ const styles = StyleSheet.create({
   searchInput: { flex: 1, fontSize: 15, padding: 0 },
   empty: { textAlign: 'center', paddingVertical: Space[8] },
 
-  // Feature / continue card -------------------------------------------------
-  featureCard: {
+  // Feature card -----------------------------------------------------------
+  feature: {
     borderRadius: Radius.xl,
     padding: Space[4],
     gap: Space[3],
@@ -395,70 +445,80 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  featureKicker: { letterSpacing: 1.2 },
-  featureBody: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Space[3],
-  },
-  featureNumeral: {
-    fontSize: 64,
-    lineHeight: 64,
-    minWidth: 64,
-    textAlign: 'center',
-  },
-  featureMain: { flex: 1, gap: 2 },
-  featureSub: { fontStyle: 'italic' },
-  featureProgress: {
+  featureKickerRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Space[2],
   },
+  kickerText: { letterSpacing: 1.4 },
+  featureBody: { gap: 4 },
+  featureSignature: { fontSize: 44, lineHeight: 56 },
+  featureMeaning: { fontStyle: 'italic' },
+  featureFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Space[2],
+    marginTop: Space[1],
+  },
   featureTrack: {
     flex: 1,
     height: 4,
+    backgroundColor: 'rgba(120,120,128,0.20)',
     borderRadius: Radius.full,
     overflow: 'hidden',
   },
   featureFill: { height: '100%' },
 
-  // Grid header -------------------------------------------------------------
-  gridHeader: {
-    letterSpacing: 1.2,
-    marginTop: Space[2],
-    marginBottom: -Space[2],
-  },
+  // Grid header -----------------------------------------------------------
+  gridHeader: { letterSpacing: 1.2, marginTop: Space[2], marginBottom: -Space[1] },
 
-  // Grid tiles --------------------------------------------------------------
+  // Tile ------------------------------------------------------------------
   columnWrapper: {
     paddingHorizontal: Space[3],
     gap: TILE_GAP,
     marginBottom: TILE_GAP,
   },
   tile: {
-    borderRadius: Radius.md,
+    borderRadius: Radius.lg,
+    padding: Space[3],
+    overflow: 'hidden',
+    justifyContent: 'space-between',
+  },
+  numberBadge: {
+    minWidth: 26,
+    height: 22,
+    borderRadius: Radius.sm,
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'hidden',
+    paddingHorizontal: 6,
+    alignSelf: 'flex-start',
   },
+  numberBadgeText: { fontSize: 13, lineHeight: 16 },
+  tileBody: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: Space[2],
+  },
+  tileSignature: {
+    textAlign: 'center',
+    lineHeight: undefined,
+  },
+  tileMeaning: { marginTop: 4, textAlign: 'center', maxWidth: '100%' },
   tileBar: {
-    position: 'absolute',
-    bottom: Space[2],
-    left: Space[3],
-    right: Space[3],
-    height: 2,
+    height: 3,
     borderRadius: Radius.full,
     overflow: 'hidden',
+    marginHorizontal: -Space[1],
   },
   tileBarFill: { height: '100%' },
-  tileCheck: {
+  completeBadge: {
     position: 'absolute',
-    top: 6,
-    right: 6,
-    width: 18,
-    height: 18,
+    top: Space[2],
+    right: Space[2],
+    width: 20,
+    height: 20,
     borderRadius: Radius.full,
-    backgroundColor: Palette.green,
     alignItems: 'center',
     justifyContent: 'center',
   },
