@@ -37,7 +37,14 @@ npm run lint
 
 ## Source material
 
-The two PDFs in the repo root (`دروس-اللغة-العربية-Madinah-Book-1.pdf`, `...-Book-2.pdf`) are the canonical reference. They are **not bundled into the app** — they exist locally as a digitization source. Book 2 has no structured data yet.
+The canonical reference is the **Madinah Arabic** book series by Dr. V. Abdur Rahim (Islamic University of Madinah). To contribute lesson content, you'll need a PDF copy of the relevant book locally. The PDFs are **not committed** to this repo (gitignored via `*.pdf`) for two reasons:
+
+1. **Copyright**: this is a widely distributed but copyrighted work. We don't host or redistribute it from this repo.
+2. **Repo size**: each book PDF is 8–14MB; tracking binary revisions would bloat git history permanently.
+
+To get the source PDFs, search for legitimate, author/publisher-authorized distributions of *Madinah Arabic Book 1/2 by Dr. V. Abdur Rahim*. Verify the title page allows free redistribution before committing any derived content.
+
+`src/data/lessons.json` currently covers Book 1 as an outline only (section headings); Book 2 has no structured data yet.
 
 ## Contributing
 

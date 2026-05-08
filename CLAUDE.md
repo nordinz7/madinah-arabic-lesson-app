@@ -44,7 +44,9 @@ There is no test runner configured yet. If asked to add tests, default to `jest-
 
 ## Source material
 
-The PDFs in the repo root are the canonical reference for what lessons should contain. They are **not** bundled into the app (would balloon the APK; ~22MB total). Treat them as digitization input only. `src/data/lessons.json` currently covers **Book 1** as an outline (section headings only, no body content) — full content needs manual transcription from the PDF, and this is expected to be the bulk of ongoing work. **Book 2 has no structured data yet** — when adding it, mirror the Book 1 schema and discuss with the user whether to extend the same `lessons` array (continuing `id`s) or introduce a `book` discriminator on each lesson.
+The canonical reference is the **Madinah Arabic** book series by Dr. V. Abdur Rahim. PDFs may sit in the repo root locally but are **gitignored** (`*.pdf` in `.gitignore`) and must never be committed — copyright for redistribution is uncertain, and binary blobs bloat git history permanently. Treat them as digitization input only; never `import` or bundle them.
+
+`src/data/lessons.json` currently covers **Book 1** as an outline (section headings only, no body content) — full content needs manual transcription from the PDF, and this is expected to be the bulk of ongoing work. **Book 2 has no structured data yet** — when adding it, mirror the Book 1 schema and discuss with the user whether to extend the same `lessons` array (continuing `id`s) or introduce a `book` discriminator on each lesson.
 
 ## Conventions
 
