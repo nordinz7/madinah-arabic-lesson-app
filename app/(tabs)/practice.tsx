@@ -3,43 +3,54 @@ import { StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Brand } from '@/constants/theme';
+import { useEffectiveColorScheme } from '@/src/hooks/use-effective-color-scheme';
+import { Palette, Radius, Semantic, type SemanticPalette, Space } from "@/src/design";
 
 export default function PracticeScreen() {
+  const colorScheme = useEffectiveColorScheme();
+  const palette = Semantic[colorScheme];
+
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, { backgroundColor: palette.bgSecondary }]}>
       <View style={styles.empty}>
-        <Ionicons
-          name="repeat-outline"
-          size={56}
-          color={Brand.muted}
-          style={styles.emptyIcon}
-        />
-        <ThemedText type="subtitle" style={styles.emptyTitle}>
-          المراجعة اليومية
+        <View style={[styles.iconCircle, { backgroundColor: Palette.brandTint }]}>
+          <Ionicons name="repeat-outline" size={36} color={Palette.brand} />
+        </View>
+        <ThemedText variant="title2" weight="bold" style={styles.emptyTitle}>
+          Daily review
         </ThemedText>
-        <ThemedText style={styles.emptyBody}>
-          ستظهر هنا بطاقات المراجعة بنظام التكرار المتباعد بمجرد إضافة المفردات
-          إلى الدروس. سيتم اختبارك على المفردات التي درستها لتثبيتها في الذاكرة
-          طويلة المدى.
+        <ThemedText variant="callout" tone="secondary" style={styles.emptyBody}>
+          Spaced-repetition flashcards will appear here as you encounter
+          new vocabulary. The system tests you on words you've seen, at
+          increasing intervals, so they stick in long-term memory.
         </ThemedText>
         <View style={styles.statsRow}>
-          <Stat label="بطاقات اليوم" value="0" />
-          <Stat label="إجمالي المفردات" value="0" />
-          <Stat label="السلسلة" value="0" />
+          <Stat label="Today" value="0" palette={palette} />
+          <Stat label="Total" value="0" palette={palette} />
+          <Stat label="Streak" value="0" palette={palette} />
         </View>
       </View>
     </ThemedView>
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({
+  label,
+  value,
+  palette,
+}: {
+  label: string;
+  value: string;
+  palette: SemanticPalette;
+}) {
   return (
-    <View style={styles.stat}>
-      <ThemedText type="title" style={styles.statValue}>
+    <View style={[styles.stat, { backgroundColor: palette.bgTertiary }]}>
+      <ThemedText variant="title1" weight="bold">
         {value}
       </ThemedText>
-      <ThemedText style={styles.statLabel}>{label}</ThemedText>
+      <ThemedText variant="caption1" tone="secondary" style={{ marginTop: 2 }}>
+        {label}
+      </ThemedText>
     </View>
   );
 }
@@ -50,27 +61,27 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 24,
+    paddingHorizontal: Space[6],
   },
-  emptyIcon: { marginBottom: 16, opacity: 0.6 },
-  emptyTitle: { textAlign: 'center', marginBottom: 8 },
+  iconCircle: {
+    width: 84,
+    height: 84,
+    borderRadius: Radius.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Space[5],
+  },
+  emptyTitle: { textAlign: 'center', marginBottom: Space[2] },
   emptyBody: {
     textAlign: 'center',
-    opacity: 0.7,
-    fontSize: 15,
-    lineHeight: 26,
     maxWidth: 340,
-    marginBottom: 32,
+    marginBottom: Space[8],
   },
-  statsRow: { flexDirection: 'row', gap: 12 },
+  statsRow: { flexDirection: 'row', gap: Space[3], width: '100%' },
   stat: {
     flex: 1,
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: 'rgba(127,127,127,0.08)',
+    paddingVertical: Space[4],
+    borderRadius: Radius.lg,
     alignItems: 'center',
-    minWidth: 90,
   },
-  statValue: { fontSize: 28, lineHeight: 36 },
-  statLabel: { fontSize: 12, opacity: 0.6, marginTop: 4 },
 });

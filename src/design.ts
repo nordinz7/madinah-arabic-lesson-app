@@ -150,3 +150,12 @@ export const Semantic = {
 } as const;
 
 export type ColorScheme = keyof typeof Semantic;
+
+/**
+ * Structural type for a semantic palette. Use this when accepting a
+ * palette as a prop — `typeof Semantic.light` would lock callers to
+ * the *literal* hex values of the light variant.
+ */
+export type SemanticPalette = {
+  readonly [K in keyof typeof Semantic.light]: string;
+};

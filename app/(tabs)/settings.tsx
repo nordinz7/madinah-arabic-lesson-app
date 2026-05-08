@@ -1,10 +1,17 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Alert, Pressable, ScrollView, StyleSheet, Switch, View } from 'react-native';
+import {
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  View,
+} from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Brand } from '@/constants/theme';
 import { useEffectiveColorScheme } from '@/src/hooks/use-effective-color-scheme';
+import { Palette, Radius, Semantic, type SemanticPalette, Space } from "@/src/design";
 import { useProgress } from '@/src/stores/progress';
 import {
   AUDIO_SPEED_OPTIONS,
@@ -15,14 +22,14 @@ import {
 } from '@/src/stores/settings';
 
 const THEME_OPTIONS: { value: ThemePreference; label: string }[] = [
-  { value: 'system', label: 'النظام' },
-  { value: 'light', label: 'فاتح' },
-  { value: 'dark', label: 'داكن' },
+  { value: 'system', label: 'System' },
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
 ];
 
 export default function SettingsScreen() {
   const colorScheme = useEffectiveColorScheme();
-  const cardBg = colorScheme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)';
+  const palette = Semantic[colorScheme];
 
   const fontScale = useSettings((s) => s.fontScale);
   const showTashkeel = useSettings((s) => s.showTashkeel);
@@ -37,29 +44,36 @@ export default function SettingsScreen() {
 
   const onResetPress = () => {
     Alert.alert(
-      'إعادة تعيين التقدم',
-      'سيتم حذف جميع علامات الإكمال والمفضلة. لا يمكن التراجع.',
+      'Reset progress',
+      'All completion marks and bookmarks will be removed. This cannot be undone.',
       [
-        { text: 'إلغاء', style: 'cancel' },
-        { text: 'حذف', style: 'destructive', onPress: () => resetProgress() },
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Reset', style: 'destructive', onPress: () => resetProgress() },
       ],
     );
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, { backgroundColor: palette.bgSecondary }]}>
       <ScrollView contentContainerStyle={styles.scroll}>
-        <Section title="القراءة">
-          <Row label={`حجم الخط (${fontScale.toFixed(2)}×)`} hint="يؤثر على نص الدروس">
+        <Section title="Reading" palette={palette}>
+          <Row
+            label="Arabic font size"
+            hint={`${fontScale.toFixed(2)}× — affects lesson body text`}
+            palette={palette}>
             <View style={styles.stepperRow}>
               <Stepper
                 disabled={fontScale <= FONT_SCALE_MIN + 0.001}
                 onPress={() => setFontScale(fontScale - 0.1)}
                 icon="remove"
               />
-              <View style={[styles.fontPreview, { backgroundColor: cardBg }]}>
+              <View style={[styles.fontPreview, { backgroundColor: palette.fillTertiary }]}>
                 <ThemedText
-                  style={{ fontSize: 22 * fontScale, lineHeight: 36 * fontScale }}>
+                  script="arabic"
+                  style={{
+                    fontSize: 22 * fontScale,
+                    lineHeight: 36 * fontScale,
+                  }}>
                   بِسْمِ اللَّهِ
                 </ThemedText>
               </View>
@@ -70,27 +84,33 @@ export default function SettingsScreen() {
               />
             </View>
           </Row>
-          <Row label="إظهار التشكيل" hint="الحركات على الحروف العربية">
+          <Separator palette={palette} />
+          <Row
+            label="Show tashkeel"
+            hint="Diacritic marks on Arabic letters"
+            palette={palette}>
             <Switch
               value={showTashkeel}
               onValueChange={setShowTashkeel}
-              trackColor={{ false: Brand.muted, true: Brand.accent }}
+              trackColor={{ false: palette.fill, true: Palette.brand }}
+              ios_backgroundColor={palette.fill}
             />
           </Row>
         </Section>
 
-        <Section title="المظهر">
-          <Row label="السمة">
+        <Section title="Appearance" palette={palette}>
+          <Row label="Theme" palette={palette}>
             <SegmentedControl
-              options={THEME_OPTIONS.map((o) => ({ value: o.value, label: o.label }))}
+              options={THEME_OPTIONS}
               value={theme}
               onChange={(v) => setTheme(v)}
+              palette={palette}
             />
           </Row>
         </Section>
 
-        <Section title="الصوت">
-          <Row label="سرعة التشغيل">
+        <Section title="Audio" palette={palette}>
+          <Row label="Playback speed" palette={palette}>
             <SegmentedControl
               options={AUDIO_SPEED_OPTIONS.map((s) => ({
                 value: s,
@@ -98,30 +118,61 @@ export default function SettingsScreen() {
               }))}
               value={audioSpeed}
               onChange={(v) => setAudioSpeed(v)}
+              palette={palette}
             />
           </Row>
         </Section>
 
-        <Section title="البيانات">
-          <Pressable onPress={onResetPress} style={[styles.dangerRow, { backgroundColor: cardBg }]}>
-            <Ionicons name="trash-outline" size={20} color={Brand.danger} />
-            <ThemedText style={styles.dangerText}>إعادة تعيين التقدم</ThemedText>
+        <Section title="Data" palette={palette}>
+          <Pressable
+            onPress={onResetPress}
+            style={({ pressed }) => [
+              styles.dangerRow,
+              { backgroundColor: palette.bgTertiary },
+              pressed && { opacity: 0.6 },
+            ]}>
+            <Ionicons name="trash-outline" size={20} color={Palette.red} />
+            <ThemedText
+              variant="body"
+              weight="medium"
+              style={{ color: Palette.red }}>
+              Reset progress
+            </ThemedText>
           </Pressable>
         </Section>
 
-        <ThemedText style={styles.footer}>
-          تطبيق مفتوح المصدر · مدينة العربية
+        <ThemedText
+          variant="caption1"
+          tone="tertiary"
+          style={styles.footer}>
+          Open source · Madinah Arabic
         </ThemedText>
       </ScrollView>
     </ThemedView>
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({
+  title,
+  palette,
+  children,
+}: {
+  title: string;
+  palette: SemanticPalette;
+  children: React.ReactNode;
+}) {
   return (
     <View style={styles.section}>
-      <ThemedText style={styles.sectionTitle}>{title}</ThemedText>
-      <View style={styles.sectionBody}>{children}</View>
+      <ThemedText
+        variant="footnote"
+        weight="semibold"
+        tone="secondary"
+        style={styles.sectionTitle}>
+        {title.toUpperCase()}
+      </ThemedText>
+      <View style={[styles.sectionBody, { backgroundColor: palette.bgTertiary }]}>
+        {children}
+      </View>
     </View>
   );
 }
@@ -129,20 +180,34 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Row({
   label,
   hint,
+  palette,
   children,
 }: {
   label: string;
   hint?: string;
+  palette: SemanticPalette;
   children: React.ReactNode;
 }) {
   return (
     <View style={styles.row}>
       <View style={styles.rowLabel}>
-        <ThemedText style={styles.rowLabelText}>{label}</ThemedText>
-        {hint ? <ThemedText style={styles.rowHint}>{hint}</ThemedText> : null}
+        <ThemedText variant="body">{label}</ThemedText>
+        {hint ? (
+          <ThemedText variant="caption1" tone="secondary" style={{ marginTop: 2 }}>
+            {hint}
+          </ThemedText>
+        ) : null}
       </View>
       <View>{children}</View>
     </View>
+  );
+}
+
+function Separator({ palette }: { palette: SemanticPalette }) {
+  return (
+    <View
+      style={[styles.separator, { backgroundColor: palette.separator }]}
+    />
   );
 }
 
@@ -161,10 +226,15 @@ function Stepper({
       onPress={onPress}
       style={({ pressed }) => [
         styles.stepperBtn,
+        { backgroundColor: Palette.brandTint },
         disabled && styles.stepperBtnDisabled,
-        pressed && !disabled && styles.stepperBtnPressed,
+        pressed && !disabled && { opacity: 0.5 },
       ]}>
-      <Ionicons name={icon} size={20} color={disabled ? Brand.muted : Brand.accent} />
+      <Ionicons
+        name={icon}
+        size={18}
+        color={disabled ? '#9BA1A6' : Palette.brand}
+      />
     </Pressable>
   );
 }
@@ -173,22 +243,28 @@ function SegmentedControl<T extends string | number>({
   options,
   value,
   onChange,
+  palette,
 }: {
   options: { value: T; label: string }[];
   value: T;
   onChange: (v: T) => void;
+  palette: SemanticPalette;
 }) {
   return (
-    <View style={styles.segments}>
+    <View style={[styles.segments, { backgroundColor: palette.fillTertiary }]}>
       {options.map((opt) => {
         const active = opt.value === value;
         return (
           <Pressable
             key={String(opt.value)}
             onPress={() => onChange(opt.value)}
-            style={[styles.segment, active && styles.segmentActive]}>
+            style={[
+              styles.segment,
+              active && { backgroundColor: palette.bgTertiary },
+            ]}>
             <ThemedText
-              style={[styles.segmentText, active && styles.segmentTextActive]}>
+              variant="footnote"
+              weight={active ? 'semibold' : 'regular'}>
               {opt.label}
             </ThemedText>
           </Pressable>
@@ -200,62 +276,64 @@ function SegmentedControl<T extends string | number>({
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  scroll: { padding: 16, paddingBottom: 40 },
-  section: { marginBottom: 24 },
+  scroll: { padding: Space[4], paddingBottom: Space[10] },
+  section: { marginBottom: Space[6] },
   sectionTitle: {
-    fontSize: 13,
-    opacity: 0.6,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 8,
-    paddingHorizontal: 4,
+    marginBottom: Space[2],
+    paddingHorizontal: Space[4],
+    letterSpacing: 0.6,
   },
-  sectionBody: { gap: 12 },
+  sectionBody: {
+    borderRadius: Radius.lg,
+    paddingHorizontal: Space[4],
+    paddingVertical: Space[1],
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: 12,
+    gap: Space[3],
+    paddingVertical: Space[3],
   },
   rowLabel: { flex: 1 },
-  rowLabelText: { fontSize: 16 },
-  rowHint: { fontSize: 12, opacity: 0.55, marginTop: 2 },
-  stepperRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  separator: {
+    height: StyleSheet.hairlineWidth,
+    marginLeft: 0,
+  },
+  stepperRow: { flexDirection: 'row', alignItems: 'center', gap: Space[2] },
   stepperBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'rgba(10,126,164,0.12)',
+    width: 32,
+    height: 32,
+    borderRadius: Radius.full,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  stepperBtnPressed: { opacity: 0.6 },
-  stepperBtnDisabled: { backgroundColor: 'rgba(127,127,127,0.1)' },
+  stepperBtnDisabled: { backgroundColor: 'rgba(127,127,127,0.10)' },
   fontPreview: {
-    minWidth: 70,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 10,
+    minWidth: 80,
+    paddingHorizontal: Space[3],
+    paddingVertical: Space[1],
+    borderRadius: Radius.md,
     alignItems: 'center',
   },
   segments: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(127,127,127,0.12)',
-    borderRadius: 10,
+    borderRadius: Radius.md,
     padding: 3,
     gap: 2,
   },
-  segment: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 },
-  segmentActive: { backgroundColor: Brand.accent },
-  segmentText: { fontSize: 14 },
-  segmentTextActive: { color: 'white', fontWeight: '600' },
+  segment: {
+    paddingHorizontal: Space[3],
+    paddingVertical: Space[1] + 2,
+    borderRadius: Radius.sm,
+  },
   dangerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    padding: 14,
-    borderRadius: 12,
+    gap: Space[3],
+    paddingHorizontal: Space[4],
+    paddingVertical: Space[3] + 2,
+    borderRadius: Radius.lg,
   },
-  dangerText: { fontSize: 16, color: Brand.danger },
-  footer: { textAlign: 'center', opacity: 0.4, fontSize: 12, marginTop: 16 },
+  footer: { textAlign: 'center', marginTop: Space[4] },
 });

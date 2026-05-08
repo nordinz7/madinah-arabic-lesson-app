@@ -6,9 +6,9 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { InterlinearText } from '@/components/interlinear-text';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Brand } from '@/constants/theme';
 import { maybeStripTashkeel } from '@/src/arabic';
 import { getLesson } from '@/src/data';
+import { Palette, Radius, Space } from '@/src/design';
 import { SECTION_PALETTE } from '@/src/section-style';
 import { lessonCompletion, useProgress } from '@/src/stores/progress';
 import { useSettings } from '@/src/stores/settings';
@@ -56,9 +56,15 @@ export default function LessonDetailScreen() {
       <Stack.Screen options={{ title: `الدرس ${lesson.id}` }} />
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.header}>
-          <ThemedText style={styles.lessonNumber}>الدرس {lesson.id}</ThemedText>
           <ThemedText
-            type="title"
+            variant="caption1"
+            tone="tertiary"
+            style={styles.lessonKicker}>
+            LESSON {lesson.id}
+          </ThemedText>
+          <ThemedText
+            script="arabic"
+            weight="bold"
             style={[
               styles.title,
               { fontSize: 30 * fontScale, lineHeight: 44 * fontScale },
@@ -74,8 +80,8 @@ export default function LessonDetailScreen() {
                 ]}
               />
             </View>
-            <ThemedText style={styles.progressText}>
-              {done}/{total}
+            <ThemedText variant="footnote" tone="secondary" weight="medium">
+              {done} / {total}
             </ThemedText>
           </View>
         </View>
@@ -117,7 +123,11 @@ function SectionCard({
     <View style={[styles.section, completed && styles.sectionCompleted]}>
       <View style={styles.sectionHeader}>
         <View style={[styles.typeDot, { backgroundColor: palette.fg }]} />
-        <ThemedText style={styles.typeLabel}>
+        <ThemedText
+          variant="caption2"
+          weight="semibold"
+          tone="tertiary"
+          style={styles.typeLabel}>
           {SECTION_LABELS_AR[section.type]}
         </ThemedText>
         <View style={styles.cardSpacer} />
@@ -125,12 +135,13 @@ function SectionCard({
           <Ionicons
             name={completed ? 'checkmark-circle' : 'ellipse-outline'}
             size={22}
-            color={completed ? Brand.success : Brand.muted}
+            color={completed ? Palette.green : '#9BA1A6'}
           />
         </Pressable>
       </View>
       <ThemedText
-        type="title"
+        script="arabic"
+        weight="bold"
         style={[
           styles.sectionTitle,
           { fontSize: 26 * fontScale, lineHeight: 38 * fontScale },
@@ -138,7 +149,10 @@ function SectionCard({
         {arabic(section.content)}
       </ThemedText>
       {subtitleParts.length ? (
-        <ThemedText style={styles.sectionSub}>
+        <ThemedText
+          variant="subheadline"
+          tone="tertiary"
+          style={styles.sectionSub}>
           {subtitleParts.join(' · ')}
         </ThemedText>
       ) : null}
@@ -169,7 +183,9 @@ function NotesBlock({ notes }: { notes: string }) {
   if (lines.length <= 1) {
     return (
       <View style={styles.notesBlock}>
-        <ThemedText style={styles.notesText}>{notes}</ThemedText>
+        <ThemedText variant="footnote" tone="secondary">
+          {notes}
+        </ThemedText>
       </View>
     );
   }
@@ -179,7 +195,10 @@ function NotesBlock({ notes }: { notes: string }) {
       {lines.map((line, i) => (
         <View key={i} style={styles.bulletRow}>
           <View style={styles.bulletDot} />
-          <ThemedText style={[styles.notesText, styles.bulletText]}>
+          <ThemedText
+            variant="footnote"
+            tone="secondary"
+            style={styles.bulletText}>
             {line}
           </ThemedText>
         </View>
@@ -197,7 +216,13 @@ function SubBlock({
 }) {
   return (
     <View style={styles.subBlock}>
-      <ThemedText style={styles.subHeading}>{title}</ThemedText>
+      <ThemedText
+        variant="caption2"
+        weight="semibold"
+        tone="tertiary"
+        style={styles.subHeading}>
+        {title.toUpperCase()}
+      </ThemedText>
       {children}
     </View>
   );
@@ -284,41 +309,56 @@ function VocabBlock({
           <View key={i} style={styles.vocabRow}>
             <View style={styles.vocabMain}>
               <View style={styles.vocabHeadline}>
-                <ThemedText style={styles.vocabArabic}>
+                <ThemedText
+                  script="arabic"
+                  weight="bold"
+                  variant="title3"
+                  style={styles.vocabArabic}>
                   {arabic(v.arabic)}
                 </ThemedText>
                 {v.gender ? (
                   <View
                     style={[
                       styles.genderChip,
-                      v.gender === 'f' ? styles.genderChipF : styles.genderChipM,
+                      v.gender === 'f'
+                        ? { backgroundColor: Palette.feminineTint }
+                        : { backgroundColor: Palette.brandTint },
                     ]}>
                     <ThemedText
-                      style={[
-                        styles.genderChipText,
-                        v.gender === 'f'
-                          ? styles.genderChipTextF
-                          : styles.genderChipTextM,
-                      ]}>
-                      {v.gender === 'f' ? 'مؤنّث' : 'مذكّر'}
+                      variant="caption2"
+                      weight="bold"
+                      style={{
+                        color: v.gender === 'f' ? Palette.feminine : Palette.brand,
+                      }}>
+                      {v.gender === 'f' ? 'feminine' : 'masculine'}
                     </ThemedText>
                   </View>
                 ) : null}
               </View>
               {v.translit ? (
-                <ThemedText style={styles.vocabTranslit}>{v.translit}</ThemedText>
+                <ThemedText
+                  variant="footnote"
+                  tone="secondary"
+                  style={styles.italic}>
+                  {v.translit}
+                </ThemedText>
               ) : null}
               {v.meaning ? (
-                <ThemedText style={styles.vocabMeaning}>{v.meaning}</ThemedText>
+                <ThemedText variant="callout">{v.meaning}</ThemedText>
               ) : null}
               {v.plural ? (
                 <View style={styles.vocabPluralRow}>
-                  <ThemedText style={styles.vocabPluralLabel}>ج.</ThemedText>
-                  <ThemedText style={styles.vocabPluralAr}>
+                  <ThemedText variant="caption1" weight="semibold" tone="tertiary">
+                    pl.
+                  </ThemedText>
+                  <ThemedText script="arabic" variant="callout">
                     {arabic(v.plural)}
                   </ThemedText>
                   {v.pluralTranslit ? (
-                    <ThemedText style={styles.vocabPluralTranslit}>
+                    <ThemedText
+                      variant="caption1"
+                      tone="tertiary"
+                      style={styles.italic}>
                       {v.pluralTranslit}
                     </ThemedText>
                   ) : null}
@@ -373,7 +413,12 @@ function ExerciseRow({
   return (
     <View style={styles.exerciseRow}>
       <View style={styles.exerciseRowHeader}>
-        <ThemedText style={styles.exerciseIndexText}>{index}.</ThemedText>
+        <ThemedText
+          variant="footnote"
+          tone="tertiary"
+          style={styles.exerciseIndexText}>
+          {index}.
+        </ThemedText>
         <View style={styles.exerciseBody}>
           <PhraseLine
             text={item.prompt}
@@ -383,8 +428,8 @@ function ExerciseRow({
           />
           {item.hint ? (
             <View style={styles.hintChip}>
-              <Ionicons name="image-outline" size={12} color={Brand.mutedStrong} />
-              <ThemedText style={styles.hintChipText}>
+              <Ionicons name="image-outline" size={12} color="#6B7280" />
+              <ThemedText variant="caption1" tone="secondary">
                 {arabic(item.hint)}
               </ThemedText>
             </View>
@@ -406,8 +451,11 @@ function ExerciseRow({
           </View>
           {!revealed ? (
             <View style={styles.answerOverlay}>
-              <Ionicons name="eye-outline" size={14} color={Brand.accent} />
-              <ThemedText style={styles.answerOverlayText}>
+              <Ionicons name="eye-outline" size={14} color={Palette.brand} />
+              <ThemedText
+                variant="caption1"
+                weight="semibold"
+                style={{ color: Palette.brand }}>
                 Tap to reveal answer
               </ThemedText>
             </View>
@@ -420,167 +468,145 @@ function ExerciseRow({
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  scroll: { padding: 16 },
-  missing: { padding: 24, fontSize: 18, textAlign: 'center' },
-  header: { paddingVertical: 16, alignItems: 'center' },
-  lessonNumber: { fontSize: 14, opacity: 0.6, marginBottom: 4 },
+  scroll: { padding: Space[4] },
+  missing: { padding: Space[6], textAlign: 'center' },
+  header: {
+    paddingTop: Space[3],
+    paddingBottom: Space[5],
+    alignItems: 'center',
+  },
+  lessonKicker: {
+    letterSpacing: 1.4,
+    marginBottom: Space[2],
+  },
   title: { textAlign: 'center' },
   progressRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    marginTop: 16,
+    gap: Space[2],
+    marginTop: Space[5],
     width: '100%',
   },
   progressTrack: {
     flex: 1,
-    height: 6,
-    backgroundColor: 'rgba(127,127,127,0.2)',
-    borderRadius: 3,
+    height: 4,
+    backgroundColor: 'rgba(120,120,128,0.20)',
+    borderRadius: Radius.full,
     overflow: 'hidden',
   },
-  progressFill: { height: '100%', backgroundColor: Brand.accent },
-  progressText: { fontSize: 13, opacity: 0.7 },
-  sections: { marginTop: 8 },
+  progressFill: { height: '100%', backgroundColor: Palette.brand },
+  sections: { marginTop: Space[2] },
   section: {
-    paddingTop: 24,
-    paddingBottom: 8,
+    paddingTop: Space[6],
+    paddingBottom: Space[2],
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: 'rgba(127,127,127,0.25)',
+    borderTopColor: 'rgba(120,120,128,0.25)',
   },
   sectionCompleted: { opacity: 0.7 },
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginBottom: 4,
+    gap: Space[2],
+    marginBottom: Space[1],
   },
   cardSpacer: { flex: 1 },
-  typeDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-  },
-  typeLabel: {
-    fontSize: 11,
-    opacity: 0.55,
-    letterSpacing: 0.3,
-  },
+  typeDot: { width: 6, height: 6, borderRadius: 3 },
+  typeLabel: { letterSpacing: 0.6 },
   sectionTitle: { textAlign: 'right' },
-  sectionSub: { fontSize: 13, opacity: 0.55, marginTop: 4, fontStyle: 'italic' },
+  sectionSub: { marginTop: Space[1], fontStyle: 'italic' },
   notesBlock: {
-    backgroundColor: 'rgba(127,127,127,0.07)',
-    borderRadius: 10,
-    padding: 12,
-    marginTop: 12,
-    gap: 6,
+    backgroundColor: 'rgba(120,120,128,0.10)',
+    borderRadius: Radius.md,
+    paddingHorizontal: Space[3],
+    paddingVertical: Space[3],
+    marginTop: Space[3],
+    gap: Space[1] + 2,
   },
-  notesText: { fontSize: 13, lineHeight: 21, opacity: 0.85 },
-  bulletRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
+  bulletRow: { flexDirection: 'row', alignItems: 'flex-start', gap: Space[2] },
   bulletDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 2.5,
-    backgroundColor: Brand.accent,
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: Palette.brand,
     marginTop: 8,
   },
   bulletText: { flex: 1 },
-  subBlock: { marginTop: 18 },
-  subHeading: {
-    fontSize: 11,
-    opacity: 0.5,
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
-    marginBottom: 12,
-  },
+  subBlock: { marginTop: Space[5] },
+  subHeading: { letterSpacing: 1, marginBottom: Space[3] },
   exampleRow: {
-    paddingVertical: 10,
+    paddingVertical: Space[3],
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(127,127,127,0.14)',
+    borderBottomColor: 'rgba(120,120,128,0.18)',
   },
-  examplePromptAnswer: { marginTop: 6 },
+  examplePromptAnswer: { marginTop: Space[1] + 2 },
   phraseMuted: { opacity: 0.85 },
-  vocabGrid: { gap: 6 },
+  italic: { fontStyle: 'italic' },
+  vocabGrid: { gap: Space[1] + 2 },
   vocabRow: {
-    backgroundColor: 'rgba(127,127,127,0.07)',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 10,
+    backgroundColor: 'rgba(120,120,128,0.10)',
+    paddingHorizontal: Space[3],
+    paddingVertical: Space[3],
+    borderRadius: Radius.md,
   },
-  vocabMain: { gap: 2 },
+  vocabMain: { gap: Space[1] - 2 },
   vocabHeadline: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: 8,
+    gap: Space[2],
   },
-  vocabArabic: { fontSize: 20, lineHeight: 30, flexShrink: 1 },
-  vocabTranslit: { fontSize: 13, opacity: 0.55, fontStyle: 'italic' },
-  vocabMeaning: { fontSize: 14, opacity: 0.9 },
+  vocabArabic: { flexShrink: 1 },
   vocabPluralRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginTop: 4,
+    gap: Space[1] + 2,
+    marginTop: Space[1],
   },
-  vocabPluralLabel: {
-    fontSize: 11,
-    opacity: 0.5,
-    fontWeight: '600',
-  },
-  vocabPluralAr: { fontSize: 15, lineHeight: 22 },
-  vocabPluralTranslit: { fontSize: 12, opacity: 0.55, fontStyle: 'italic' },
   genderChip: {
-    paddingHorizontal: 7,
+    paddingHorizontal: Space[2],
     paddingVertical: 2,
-    borderRadius: 999,
+    borderRadius: Radius.full,
   },
-  genderChipM: { backgroundColor: 'rgba(10,126,164,0.12)' },
-  genderChipF: { backgroundColor: 'rgba(244,114,182,0.16)' },
-  genderChipText: { fontSize: 10, fontWeight: '700' },
-  genderChipTextM: { color: Brand.accent },
-  genderChipTextF: { color: Brand.feminine },
   exerciseRow: {
-    paddingVertical: 12,
+    paddingVertical: Space[3],
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(127,127,127,0.14)',
+    borderBottomColor: 'rgba(120,120,128,0.18)',
   },
-  exerciseRowHeader: { flexDirection: 'row', gap: 8, alignItems: 'flex-start' },
+  exerciseRowHeader: {
+    flexDirection: 'row',
+    gap: Space[2],
+    alignItems: 'flex-start',
+  },
   exerciseIndexText: {
-    fontSize: 13,
-    opacity: 0.45,
     minWidth: 22,
     textAlign: 'right',
     marginTop: 2,
   },
   exerciseBody: { flex: 1 },
-  exerciseMeaning: { fontSize: 13, opacity: 0.6, marginTop: 4 },
   hintChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: Space[1],
     alignSelf: 'flex-start',
-    paddingHorizontal: 8,
+    paddingHorizontal: Space[2],
     paddingVertical: 3,
-    backgroundColor: 'rgba(127,127,127,0.12)',
-    borderRadius: 999,
-    marginTop: 6,
+    backgroundColor: 'rgba(120,120,128,0.16)',
+    borderRadius: Radius.full,
+    marginTop: Space[2],
   },
-  hintChipText: { fontSize: 12, color: Brand.mutedStrong },
   answerWrap: {
-    marginTop: 8,
-    borderRadius: 10,
+    marginTop: Space[2],
+    borderRadius: Radius.md,
     overflow: 'hidden',
   },
   answerInner: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: 'rgba(22,163,74,0.10)',
-    borderRadius: 10,
+    paddingHorizontal: Space[3],
+    paddingVertical: Space[2],
+    backgroundColor: 'rgba(48,185,95,0.12)',
+    borderRadius: Radius.md,
     minHeight: 40,
     justifyContent: 'center',
   },
-  answerText: { color: Brand.successText },
   answerTextHidden: { opacity: 0 },
   answerOverlay: {
     position: 'absolute',
@@ -588,12 +614,11 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(127,127,127,0.18)',
-    borderRadius: 10,
+    backgroundColor: 'rgba(120,120,128,0.18)',
+    borderRadius: Radius.md,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
+    gap: Space[1] + 2,
   },
-  answerOverlayText: { fontSize: 12, color: Brand.accent, fontWeight: '600' },
 });
